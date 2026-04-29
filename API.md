@@ -1,8 +1,8 @@
 # 🛠️ Public Interface: Supplier Crawling API
 
-> **Base Path:** `/api/supplier-crawling`
-> **Port:** 8007 (Proposed)
-> **OpenAPI Docs:** `http://localhost:8007/docs`
+> **Base Path:** `/api/v1`
+> **Port:** 8007
+> **Standard**: Matches Crawling MS API for plug-and-play Enrichment sync.
 
 ---
 
@@ -13,59 +13,36 @@ Standard health check.
 
 ---
 
-### 2. GET /api/supplier-crawling/credentials
-List configured portal credentials (masking sensitive fields).
-- **Consumer**: Admin UI
+### 2. GET /api/v1/tenders
+Fetch scraped supplier profiles mapped to the **Tender schema**.
+- **Consumer**: Enrichment MS (Sync Worker)
 
 #### Response (200)
 ```json
-{
-  "credentials": [
-    {
-      "id": "uuid",
-      "portal_type": "ARIBA",
-      "username": "bot_procurement_01",
-      "status": "connected",
-      "last_sync": "ISO8601"
-    }
-  ]
-}
-```
-
-### 3. POST /api/supplier-crawling/credentials
-Register new portal credentials.
-
-#### Request Body
-```json
-{
-  "portal_type": "JAGGAER",
-  "username": "string",
-  "password": "string",
-  "two_fa_secret": "optional_string"
-}
+[
+  {
+    "id": "uuid",
+    "external_id": "ARIBA-123",
+    "source_system": "ARIBA_PORTAL",
+    "title": "Siemens AG",
+    "description": "Global technology powerhouse...",
+    "notice_type": "SUPPLIER_PROFILE",
+    "metadata_info": {
+      "portal_specific_data": {
+        "rating": 95,
+        "certificates": ["ISO 9001", "ISO 14001"],
+        "status": "Preferred"
+      }
+    },
+    "crawled_at": "ISO8601"
+  }
+]
 ```
 
 ---
 
-### 4. GET /api/supplier-crawling/data/{supplier_id}
-Get raw scraped data for a supplier across all monitored portals.
-- **Consumer**: Enriching MS, Dashboard
-
-#### Response (200)
-```json
-{
-  "supplier_id": "string",
-  "portal_breakdown": [
-    { "portal": "ARIBA", "last_crawl": "ISO8601", "data": { "..." } },
-    { "portal": "ONVENTIS", "last_crawl": "ISO8601", "data": { "..." } }
-  ]
-}
-```
-
----
-
-### 5. POST /api/supplier-crawling/sync-request
-Manually trigger a crawling job for a specific supplier.
+### 3. POST /api/v1/sync-request
+Trigger an on-demand crawl for a supplier.
 
 #### Request Body
 ```json

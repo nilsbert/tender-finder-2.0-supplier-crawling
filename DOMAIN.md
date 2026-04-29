@@ -8,24 +8,28 @@
 
 ## 1. Bounded Context Purpose
 
-The Supplier Crawling context is responsible for the **automated discovery and extraction of data** from diverse enterprise portals (SAP Ariba, JAGGAER, etc.). It manages the secure credentials required for portal access and crawls external portals to fetch supplier profiles, certificates, and performance indicators.
+The Supplier Crawling context discovers and extracts supplier data from enterprise portals. To ensure seamless integration with the **Enrichment MS**, it uses the standard **Tender Domain Model**. This allows "Supplier Profiles" to be processed, summarized, and matched using the same pipeline as procurement notices.
 
 ## 2. 🧱 Entities
 
 ### PortalCredential (Aggregate Root)
 - **Identity**: `portal_id` + `account_id`.
-- **Attributes**: `portal_type` (ARIBA, JAGGAER, ONVENTIS), `username`, `encrypted_password`, `two_fa_secret`, `last_login_at`.
-- **Behavior**: Used by the Crawling Engine to authenticate sessions.
-- **Invariant**: Passwords must never be stored in plain text.
+- **Attributes**: `portal_type` (ARIBA, JAGGAER), `username`, `encrypted_password`.
+- **Behavior**: Used by the Crawling Engine to authenticate.
 
-### ScrapedSupplierData
-- **Identity**: `supplier_id` + `portal_type`.
-- **Attributes**: `raw_data_json`, `scraped_at`, `source_url`.
-- **Lifecycle**: Updated periodically by background crawling jobs.
+### Tender (Supplier Profile Mapping)
+- **Identity**: `external_id` (e.g., Ariba Supplier ID).
+- **Attributes**:
+    - `title`: Company Name.
+    - `description`: Scraped profile description.
+    - `source_system`: e.g., `ARIBA_PORTAL`.
+    - `notice_type`: Fixed to `SUPPLIER_PROFILE`.
+    - `portal_specific_data`: JSON field containing ratings, certificates, and compliance scores.
+- **Lifecycle**: Mapped from portal-specific HTML to the standard Tender schema.
 
 ### CrawlingJob
 - **Identity**: `job_id`.
-- **Attributes**: `target_supplier`, `portal_type`, `current_step` (LOGIN, SEARCH, EXTRACT, LOGOUT), `status` (RUNNING, SUCCESS, FAILED), `error_log`.
+- **Attributes**: `target_supplier`, `portal_type`, `status`.
 
 ## 3. 💎 Value Objects
 
