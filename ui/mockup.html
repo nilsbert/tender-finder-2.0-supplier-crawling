@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supplier Portal Management | Tender Finder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0a0a0c;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --primary-accent: #d5001c; /* Porsche Red */
+            --secondary-accent: #323232;
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
+            --success: #00d5a0;
+            --warning: #ffcc00;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        header {
+            padding: 2rem 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .logo span {
+            color: var(--primary-accent);
+        }
+
+        main {
+            padding: 3rem 4rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+        }
+
+        /* Dashboard Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            color: var(--text-muted);
+            font-weight: 400;
+            font-size: 0.875rem;
+            padding: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        td {
+            padding: 1.25rem 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            font-size: 0.9375rem;
+        }
+
+        .status-pill {
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-active { background: rgba(0, 213, 160, 0.1); color: var(--success); border: 1px solid var(--success); }
+        .status-warning { background: rgba(255, 204, 0, 0.1); color: var(--warning); border: 1px solid var(--warning); }
+
+        /* Form / Interaction */
+        .btn {
+            background: var(--primary-accent);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn:hover {
+            background: #b00017;
+        }
+
+        .btn-secondary {
+            background: var(--secondary-accent);
+        }
+
+        /* Scraper Jobs List */
+        .job-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .job-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .job-info h4 {
+            font-size: 0.9375rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .job-info p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Portal Logos */
+        .portal-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .portal-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">Tender<span>Finder</span></div>
+        <div class="nav-actions">
+            <button class="btn btn-secondary">Settings</button>
+            <button class="btn">Add Portal</button>
+        </div>
+    </header>
+
+    <main>
+        <section class="fade-in">
+            <h1>Supplier Portal Ratings</h1>
+            <p class="subtitle">Managing automated scraping & health-checks for 12 enterprise portals.</p>
+        </section>
+
+        <div class="grid">
+            <!-- Left Column: Configured Portals -->
+            <div class="card fade-in delay-1">
+                <div class="card-header">
+                    <h2 class="card-title">Configured Portals & Credentials</h2>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Portal</th>
+                            <th>Username</th>
+                            <th>Status</th>
+                            <th>Last Sync</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="portal-badge">
+                                    <div class="portal-dot" style="background: #0070c0;"></div>
+                                    SAP Ariba
+                                </div>
+                            </td>
+                            <td>bot_ariba_global</td>
+                            <td><span class="status-pill status-active">Connected</span></td>
+                            <td>24m ago</td>
+                            <td><button class="btn-secondary" style="padding: 0.4rem 0.8rem; border-radius: 6px;">Edit</button></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="portal-badge">
+                                    <div class="portal-dot" style="background: #e30613;"></div>
+                                    JAGGAER
+                                </div>
+                            </td>
+                            <td>tender_bot_de</td>
+                            <td><span class="status-pill status-active">Connected</span></td>
+                            <td>2h ago</td>
+                            <td><button class="btn-secondary" style="padding: 0.4rem 0.8rem; border-radius: 6px;">Edit</button></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="portal-badge">
+                                    <div class="portal-dot" style="background: #ffcc00;"></div>
+                                    Onventis
+                                </div>
+                            </td>
+                            <td>admin_p_portal</td>
+                            <td><span class="status-pill status-warning">2FA Expired</span></td>
+                            <td>1d ago</td>
+                            <td><button class="btn" style="padding: 0.4rem 0.8rem; border-radius: 6px; background: var(--warning); color: black;">Verify</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Right Column: Active Jobs -->
+            <div class="card fade-in delay-2">
+                <div class="card-header">
+                    <h2 class="card-title">Live Scraper Logs</h2>
+                </div>
+                
+                <div class="job-item">
+                    <div class="job-icon">🔍</div>
+                    <div class="job-info">
+                        <h4>Searching: Siemens AG</h4>
+                        <p>Portal: SAP Ariba | Step: Extracting Ratings...</p>
+                    </div>
+                </div>
+
+                <div class="job-item">
+                    <div class="job-icon" style="background: rgba(0, 213, 160, 0.1); color: var(--success);">✅</div>
+                    <div class="job-info">
+                        <h4>Sync Complete: Bosch GmbH</h4>
+                        <p>Normalized Score: 94.2 | Portals: 4</p>
+                    </div>
+                </div>
+
+                <div class="job-item">
+                    <div class="job-icon">🔄</div>
+                    <div class="job-info">
+                        <h4>Scheduled: Volkswagen Group</h4>
+                        <p>Queueing for 18:00 UTC...</p>
+                    </div>
+                </div>
+
+                <button class="btn btn-secondary" style="width: 100%; margin-top: 1rem;">View All Logs</button>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>
