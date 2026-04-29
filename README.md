@@ -1,13 +1,13 @@
-# 🛡️ Supplier Rating Microservice
+# 🛡️ Supplier Crawling Microservice
 
 > **Internal Project Name:** Project Portal-Guard
 > **Owner:** Roman (Product Management)
 > **Status:** Architecture Phase (Draft)
 
-This microservice is responsible for the **automated extraction, evaluation, and normalization of supplier data** from various enterprise "Lieferantenportale" (Supplier Portals).
+This microservice is responsible for the **automated discovery and extraction of data** from various enterprise "Lieferantenportale" (Supplier Portals).
 
 ## 🚀 Vision
-To provide the Tender Finder ecosystem with real-time "Supplier Health" intelligence, ensuring that every tender pursuit is backed by validated supplier credentials and ratings from portals like SAP Ariba, JAGGAER, and Onventis.
+To provide the Tender Finder ecosystem with real-time "Supplier Profile" intelligence, ensuring that every tender pursuit is backed by validated supplier data from portals like SAP Ariba, JAGGAER, and Onventis.
 
 ## 📂 Documentation
 - [🧠 Domain Model](DOMAIN.md): Entities, Value Objects, and Business Rules.
@@ -17,7 +17,7 @@ To provide the Tender Finder ecosystem with real-time "Supplier Health" intellig
 
 ## 🛠️ Technical Stack (Target)
 - **Runtime**: Python 3.12+ (FastAPI)
-- **Scraper Engine**: Playwright (with Stealth Plugin)
+- **Crawl Engine**: Playwright (with Stealth Plugin)
 - **Database**: PostgreSQL (SQLAlchemy/Alembic)
 - **Integration**: Webhooks/Events to Enrichment MS
 

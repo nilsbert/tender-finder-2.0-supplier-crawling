@@ -1,4 +1,4 @@
-# 🧠 Domain Model: Supplier Rating Context
+# 🧠 Domain Model: Supplier Crawling Context
 
 > **Context Type:** Supporting Domain
 > **Sovereignty:** Full (Private Database, Independent Tests)
@@ -8,22 +8,22 @@
 
 ## 1. Bounded Context Purpose
 
-The Supplier Rating context (also known as Portal Scraper) is responsible for the **automated monitoring and evaluation of suppliers** across diverse enterprise portals (SAP Ariba, JAGGAER, etc.). It manages the secure credentials required for portal access and normalizes external performance data into a unified internal rating.
+The Supplier Crawling context is responsible for the **automated discovery and extraction of data** from diverse enterprise portals (SAP Ariba, JAGGAER, etc.). It manages the secure credentials required for portal access and crawls external portals to fetch supplier profiles, certificates, and performance indicators.
 
 ## 2. 🧱 Entities
 
 ### PortalCredential (Aggregate Root)
 - **Identity**: `portal_id` + `account_id`.
 - **Attributes**: `portal_type` (ARIBA, JAGGAER, ONVENTIS), `username`, `encrypted_password`, `two_fa_secret`, `last_login_at`.
-- **Behavior**: Used by the Scraper Engine to authenticate sessions.
+- **Behavior**: Used by the Crawling Engine to authenticate sessions.
 - **Invariant**: Passwords must never be stored in plain text.
 
-### SupplierRating
+### ScrapedSupplierData
 - **Identity**: `supplier_id` + `portal_type`.
-- **Attributes**: `raw_score`, `normalized_score` (0-100), `status` (CERTIFIED, REJECTED, PENDING), `scraped_at`.
-- **Lifecycle**: Updated periodically by background scraping jobs.
+- **Attributes**: `raw_data_json`, `scraped_at`, `source_url`.
+- **Lifecycle**: Updated periodically by background crawling jobs.
 
-### ScrapingJob
+### CrawlingJob
 - **Identity**: `job_id`.
 - **Attributes**: `target_supplier`, `portal_type`, `current_step` (LOGIN, SEARCH, EXTRACT, LOGOUT), `status` (RUNNING, SUCCESS, FAILED), `error_log`.
 

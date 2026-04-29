@@ -1,8 +1,8 @@
-# 🛠️ Public Interface: Supplier Rating API
+# 🛠️ Public Interface: Supplier Crawling API
 
-> **Base Path:** `/api/supplier-rating`
-> **Port:** 8006 (Proposed)
-> **OpenAPI Docs:** `http://localhost:8006/docs`
+> **Base Path:** `/api/supplier-crawling`
+> **Port:** 8007 (Proposed)
+> **OpenAPI Docs:** `http://localhost:8007/docs`
 
 ---
 
@@ -13,7 +13,7 @@ Standard health check.
 
 ---
 
-### 2. GET /api/supplier-rating/credentials
+### 2. GET /api/supplier-crawling/credentials
 List configured portal credentials (masking sensitive fields).
 - **Consumer**: Admin UI
 
@@ -32,7 +32,7 @@ List configured portal credentials (masking sensitive fields).
 }
 ```
 
-### 3. POST /api/supplier-rating/credentials
+### 3. POST /api/supplier-crawling/credentials
 Register new portal credentials.
 
 #### Request Body
@@ -47,26 +47,25 @@ Register new portal credentials.
 
 ---
 
-### 4. GET /api/supplier-rating/ratings/{supplier_id}
-Get consolidated ratings for a supplier across all monitored portals.
+### 4. GET /api/supplier-crawling/data/{supplier_id}
+Get raw scraped data for a supplier across all monitored portals.
 - **Consumer**: Enriching MS, Dashboard
 
 #### Response (200)
 ```json
 {
   "supplier_id": "string",
-  "overall_score": 88.5,
   "portal_breakdown": [
-    { "portal": "ARIBA", "score": 90, "status": "Certified" },
-    { "portal": "ONVENTIS", "score": 85, "status": "Active" }
+    { "portal": "ARIBA", "last_crawl": "ISO8601", "data": { "..." } },
+    { "portal": "ONVENTIS", "last_crawl": "ISO8601", "data": { "..." } }
   ]
 }
 ```
 
 ---
 
-### 5. POST /api/supplier-rating/sync-request
-Manually trigger a scraping job for a specific supplier.
+### 5. POST /api/supplier-crawling/sync-request
+Manually trigger a crawling job for a specific supplier.
 
 #### Request Body
 ```json
@@ -81,15 +80,16 @@ Manually trigger a scraping job for a specific supplier.
 
 ## 🔗 Integration with Enrichment MS
 
-The Supplier Rating MS will push updates to the Enrichment MS when a rating changes significantly.
+The Supplier Crawling MS will push new raw data to the Enrichment MS.
 
-**Webhook / Event:** `SUPPLIER_RATING_UPDATED`
+**Webhook / Event:** `SUPPLIER_DATA_CRAWLED`
 **Payload:**
 ```json
 {
   "supplier_id": "string",
-  "new_score": 92.0,
-  "change_reason": "New ISO certification detected in JAGGAER"
+  "source_portal": "ARIBA",
+  "scraped_at": "ISO8601",
+  "data_snippet": "..."
 }
 ```
 
