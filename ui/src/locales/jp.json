@@ -1,0 +1,43 @@
+{
+    "common": {
+        "language": "言語",
+        "loading": "読み込み中...",
+        "error": "エラー",
+        "success": "成功",
+        "cancel": "キャンセル",
+        "save": "保存",
+        "delete": "削除",
+        "start": "開始",
+        "stop": "停止",
+        "date": "日付",
+        "description": "説明",
+        "status": "ステータス"
+    },
+    "dashboard": {
+        "title": "ダッシュボード",
+        "subtitle": "テンダーソーシングと資格の概要"
+    },
+    "crawler_run": {
+        "title": "クローラーの実行",
+        "subtitle": "各ソースから入札情報を取得するためにクローラーを開始します",
+        "start_crawler": "クローラーを開始",
+        "stop_crawler": "停止",
+        "stop_all": "すべて停止",
+        "start_all": "すべて開始",
+        "set_limits": "制限を設定",
+        "hide_limits": "制限を隠す",
+        "stop_at_date": "指定日で停止",
+        "max_tenders": "最大取得数"
+    },
+    "header": {
+        "nav": {
+            "dashboard": "ダッシュボード",
+            "sourcing": "Sourcing",
+            "qualification": "Qualifikation",
+            "taxonomy": "Taxonomie",
+            "distributing": "Distributing",
+            "iam": "IAM",
+            "settings": "設定"
+        }
+    }
+}

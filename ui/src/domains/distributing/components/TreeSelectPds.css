@@ -1,0 +1,55 @@
+/* PDS Adaptation for RC-Tree-Select to match Porsche Design System inputs */
+
+.pds-tree-select-wrapper .rc-tree-select-selector {
+    border: 1px solid #e3e4e5 !important;
+    /* PDS Border Color equivalent */
+    border-radius: 4px !important;
+    min-height: 48px !important;
+    /* PDS Input Standard Height */
+    padding: 8px 16px !important;
+    display: flex !important;
+    align-items: center !important;
+    box-shadow: none !important;
+    transition: border-color 0.2s ease;
+}
+
+.pds-tree-select-wrapper .rc-tree-select-selector:hover {
+    border-color: #626669 !important;
+}
+
+.pds-tree-select-wrapper .rc-tree-select-focused .rc-tree-select-selector {
+    border-color: #d5001c !important;
+    /* Porsche Red focus */
+    box-shadow: none !important;
+}
+
+.pds-tree-select-wrapper .rc-tree-select-selection-search-input {
+    height: 100% !important;
+}
+
+.pds-tree-select-wrapper .rc-tree-select-selection-placeholder {
+    line-height: 32px !important;
+    color: #949a9e !important;
+}
+
+.pds-tree-select-wrapper .rc-tree-select-selection-item {
+    line-height: 32px !important;
+}
+
+/* Ensure switcher is visible and aligned */
+.rc-tree-select-tree-switcher {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+}
+
+.rc-tree-select-tree-treenode-active .rc-tree-select-tree-node-content-wrapper {
+    background-color: #f5f5f5 !important;
+}
+
+.rc-tree-select-tree-node-selected .rc-tree-select-tree-node-content-wrapper {
+    background-color: #e6e6e6 !important;
+    font-weight: 600;
+    color: #d5001c !important;
+}

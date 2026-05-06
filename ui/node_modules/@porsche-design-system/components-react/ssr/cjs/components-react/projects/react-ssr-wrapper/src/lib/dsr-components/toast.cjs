@@ -1,0 +1,18 @@
+'use strict';
+
+var jsxRuntime = require('react/jsx-runtime');
+var react = require('react');
+var minifyCss = require('../../minifyCss.cjs');
+var stylesEntry = require('../../../../../../components/dist/styles/esm/styles-entry.cjs');
+
+class DSRToast extends react.Component {
+    host;
+    toastItemElement;
+    render() {
+        const toast = false;
+        const style = minifyCss.minifyCss(stylesEntry.getToastCss().replace(/(:host {[\S\s]+?})[\S\s]+/, '$1'));
+        return (jsxRuntime.jsx(jsxRuntime.Fragment, { children: jsxRuntime.jsxs("template", { shadowroot: "open", shadowrootmode: "open", children: [jsxRuntime.jsx("style", { dangerouslySetInnerHTML: { __html: style } }), jsxRuntime.jsx(jsxRuntime.Fragment, { children: toast })] }) }));
+    }
+}
+
+exports.DSRToast = DSRToast;

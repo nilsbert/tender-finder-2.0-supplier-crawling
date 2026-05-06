@@ -1,0 +1,11 @@
+Port 8011 is in use, trying another one...
+
+  VITE v7.3.1  ready in 1520063 ms
+
+  ➜  Local:   http://localhost:8012/
+  ➜  Network: use --host to expose
+11:19:22 PM [vite] (client) page reload modern_admin.html
+11:19:22 PM [vite] (client) page reload modern_admin.html
+11:21:34 PM [vite] (client) page reload modern_admin.html
+3:00:09 AM [vite] (client) page reload modern_admin.html
+1:06:20 PM [vite] (client) page reload modern_admin.html

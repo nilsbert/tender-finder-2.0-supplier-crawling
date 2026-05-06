@@ -1,0 +1,37 @@
+@import '@porsche-design-system/components-react/index.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* MHP blue color scheme (keep Porsche Design System components) */
+    --tf-accent: #1612ff;
+    --tf-accent-2: #7280ff;
+    --tf-accent-bg: #f0f3ff;
+    --tf-danger: #dc3545;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-900 antialiased;
+    font-family: 'Porsche Next', 'Arial Narrow', Arial, 'Heiti SC', SimHei, sans-serif;
+  }
+}
+
+@layer components {
+
+  /* Make Porsche Design System form controls smaller */
+  p-select-wrapper::part(select-wrapper-dropdown),
+  p-text-field-wrapper::part(input) {
+    height: 36px !important;
+    min-height: 36px !important;
+    padding: 6px 12px !important;
+    font-size: 14px !important;
+  }
+
+  p-select-wrapper::part(label),
+  p-text-field-wrapper::part(label) {
+    font-size: 12px !important;
+    margin-bottom: 4px !important;
+  }
+}

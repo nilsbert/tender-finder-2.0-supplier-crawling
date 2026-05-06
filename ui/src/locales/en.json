@@ -1,0 +1,291 @@
+{
+    "analysis": {
+        "crawler_activity": "Crawler Activity",
+        "filter": {
+            "all_sources": "All Sources",
+            "all_subtypes": "All Sub-types",
+            "all_types": "All Types",
+            "any_score": "Any Score",
+            "companies": "Companies",
+            "crawl_date": "Crawl Date",
+            "date_range": "Date Range",
+            "end_date": "End Date",
+            "enriched_date": "Enriched Date",
+            "min_score": "Min Score",
+            "next": "Next",
+            "office_label": "Filter by Office",
+            "portals": "Portals",
+            "prev": "Prev",
+            "published_date": "Published Date",
+            "reset": "Reset Filters",
+            "search_label": "Global Search",
+            "search_placeholder": "Search headlines, callers, or IDs...",
+            "selected_day": "Selected Day",
+            "single_day": "Single Day",
+            "source_label": "Filter by Source",
+            "start_date": "Start Date",
+            "subtype_label": "Sub-type",
+            "today": "Today",
+            "type_label": "Type",
+            "type_sector": "Sector",
+            "type_service": "Service"
+        },
+        "no_data_chart": "No data for selected period",
+        "no_results": "No results found for your search \"{{search}}\". Please check your input.",
+        "subtitle": "Monitor tender intake volume, track crawler health, and analyze intake distribution.",
+        "title": "Crawling Analysis",
+        "total_tenders": "Total Tenders"
+    },
+    "common": {
+        "actions": "Actions",
+        "all": "All",
+        "manual": "Manual",
+        "crawled": "Crawled",
+        "back": "Back",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "date": "Date",
+        "delete": "Delete",
+        "description": "Description",
+        "edit": "Edit",
+        "environment": {
+            "database": "Database",
+            "local": "DEVELOPMENT",
+            "mode": "MODE",
+            "port": "Port",
+            "production": "PRODUCTION",
+            "staging": "STAGING",
+            "test": "TESTING"
+        },
+        "error": "An error occurred",
+        "filter": "Filter",
+        "language": "Language",
+        "loading": "Loading...",
+        "next": "Next",
+        "no": "No",
+        "no_data": "No data available",
+        "page": "Page",
+        "previous": "Previous",
+        "save": "Save",
+        "search": "Search",
+        "start": "Start",
+        "status": "Status",
+        "stop": "Stop",
+        "success": "Success",
+        "unassigned": "Unassigned",
+        "unknown": "Unknown",
+        "yes": "Yes",
+        "reset_filters": "Reset Filters"
+    },
+    "crawler_run": {
+        "ago": "ago",
+        "available_crawlers": "Available Crawlers",
+        "companies": "Companies",
+        "crawlers": {
+            "ad": {
+                "description": "Comprehensive database for German public tenders and contract notices across all sectors.",
+                "name": "Ausschreibungen Deutschland"
+            },
+            "austria": {
+                "description": "Austrian federal procurement portal. Official tender notices from Austrian government agencies.",
+                "name": "Austria (Bund)"
+            },
+            "bund": {
+                "description": "German federal government procurement portal. Official tenders from federal ministries and agencies.",
+                "name": "Bund.de"
+            },
+            "db": {
+                "description": "Direct crawler for DB Supplier Portal.",
+                "name": "Deutsche Bahn"
+            },
+            "evergabe": {
+                "description": "German federal procurement platform. Access to nationwide public tenders and contract notices.",
+                "name": "Evergabe Online"
+            },
+            "oeffentliche": {
+                "description": "Comprehensive German tender portal covering federal, state, and municipal procurement.",
+                "name": "Öffentliche Vergabe"
+            },
+            "simap": {
+                "description": "Swiss public procurement platform. Official tender publication system for Switzerland.",
+                "name": "SIMAP"
+            },
+            "ted_austria": {
+                "description": "Official EU tenders publication database, filtered for Austria. Specifically targets AT country code.",
+                "name": "TED Austria"
+            },
+            "ted_germany": {
+                "description": "Official EU tenders publication database, filtered for Germany. Targets German notices published on TED.",
+                "name": "TED Germany"
+            },
+            "ted_switzerland": {
+                "description": "Official EU tenders publication database, filtered for Switzerland. Targets Swiss notices published on TED.",
+                "name": "TED Switzerland"
+            },
+            "tender24": {
+                "description": "Commercial tender aggregation platform covering multiple European procurement databases.",
+                "name": "Tender24"
+            },
+            "tk": {
+                "description": "Direct crawler for TK procurement portal (vergabe.tk.de).",
+                "name": "Techniker Krankenkasse"
+            }
+        },
+        "hide_limits": "Hide Limits",
+        "just_now": "just now",
+        "latest_data": "Latest Data",
+        "max_hint": "Stops when the maximum number of tenders is reached (Default: 500)",
+        "max_tenders": "Max Tenders",
+        "messages": {
+            "error_date_past": "Please select a valid date (must be in the past or today).",
+            "error_max_positive": "Number of tenders must be a positive number.",
+            "error_max_valid": "Please enter a valid number for max tenders.",
+            "error_start_failed": "Failed to start crawler!",
+            "unsupported": "This crawler is currently not supported."
+        },
+        "portals": "Portals",
+        "progress": {
+            "completed": "Completed. {{count}} tenders found{{reason}}.",
+            "crawled": "{{current}}/{{total}} crawled",
+            "failed": "Failed. {{error}}",
+            "found": "{{count}} tenders found...",
+            "queued": "In queue (waiting for worker)...",
+            "reason_cutoff": " (cutoff date reached)",
+            "reason_limit": " (limit reached)",
+            "reason_max": " (max count reached)",
+            "running_init": "Running (initializing)...",
+            "starting": "Starting..."
+        },
+        "queued": "Queued",
+        "running": "Running...",
+        "set_limits": "Set Limits",
+        "start_crawler": "Start Crawler",
+        "stop_crawler": "Stop Crawler",
+        "stop_all": "Stop All",
+        "start_all": "Start All",
+        "purge_queue": "Purge Queue",
+        "view_logs": "View Logs",
+        "configure_schedule": "Configure Schedule",
+        "logs_title": "System Logs",
+        "logs_loading": "Loading Logs...",
+        "logs_empty": "No logs found.",
+        "refresh_logs": "Refresh",
+        "stop_at_date": "Stop at Date",
+        "stop_hint": "Stops when tenders older than this date are reached (Default: 7 days ago)",
+        "subtitle": "Start individual crawlers to fetch tenders from various sources",
+        "title": "Run Crawlers"
+    },
+    "dashboard": {
+        "kpis": {
+            "failed_runs": "Failed Runs",
+            "loading": "Loading KPIs...",
+            "no_data": "No data available",
+            "successful_runs": "Successful Runs",
+            "tenders_found": "Tenders Found",
+            "title": "Performance (Last 7 Days)",
+            "total_runs": "Total Runs"
+        },
+        "subtitle": "Overview of crawler performance and tender pipeline.",
+        "title": "Bid Manager Dashboard",
+        "top_keywords": {
+            "title": "Top Keywords",
+            "loading": "Loading Top Keywords...",
+            "no_data": "No keyword data available"
+        },
+        "funnel": {
+            "title": "Tender Funnel",
+            "scraped": "Scraped",
+            "analyzed": "Analyzed",
+            "interesting": "Interesting",
+            "bidding": "Bidding",
+            "won": "Won",
+            "loading": "Loading Funnel...",
+            "no_data": "No funnel data available"
+        },
+        "top_tenders": {
+            "title": "Top Tenders",
+            "loading": "Loading Top Tenders...",
+            "no_data": "No data available",
+            "no_tenders": "No tenders found.",
+            "top_10_month": "Top 10 (last 30 days)",
+            "top_10_week": "Top 10 (last 7 days)",
+            "top_10_today": "Top 10 (last 24h)"
+        },
+        "filters": {
+            "context_title": "Context Filters",
+            "offices": "Offices",
+            "sectors": "Sectors",
+            "services": "Services",
+            "source": "Source",
+            "status": "Status",
+            "status_open": "Open",
+            "status_closed": "Closed (Contract Award)",
+            "status_all": "All"
+        }
+    },
+    "header": {
+        "analysis": "Analysis",
+        "app_title": "Tender AI - Make Tenders Fun Again",
+        "config": "Configuration",
+        "nav": {
+            "capability": "Capability Match",
+            "dashboard": "Dashboard",
+            "governance": "Bid Governance",
+            "qualification": "Qualification",
+            "taxonomy": "Taxonomy",
+            "references": "References & Profiles",
+            "sourcing": "Sourcing",
+            "iam": "IAM",
+            "settings": "Settings"
+        },
+        "run": "Start Crawler",
+        "title": "Config & Tools",
+        "upload": "Manual Upload"
+    },
+    "manual_upload": {
+        "messages": {
+            "error_create_failed": "Failed to create tender.",
+            "error_headline_required": "Headline is required.",
+            "error_missing_upload": "Upload missing. Please upload a file first.",
+            "error_pdf_only": "Only PDF files are accepted.",
+            "error_file_too_large": "File is too large (max {{max}} MB).",
+            "error_refill_empty": "Please insert text before starting analysis.",
+            "error_select_file": "Please select a file first.",
+            "error_status_check": "Status check failed.",
+            "error_upload_failed": "Upload failed.",
+            "success_created": "Tender created (ID: {{id}})."
+        },
+        "review_section": {
+            "caller": "Issuing Authority",
+            "cpv_codes": "CPV Codes (comma separated)",
+            "create": "Create Tender",
+            "description": "Description",
+            "due_date": "Deadline",
+            "est_volume": "Est. Volume",
+            "full_text": "Full Text (optional)",
+            "headline": "Headline",
+            "hint": "Pre-filled by AI extraction if available. Adjust everything before creating the tender.",
+            "location": "Location",
+            "published_date": "Publication Date",
+            "refill": "Refill from AI",
+            "source_url": "Source URL",
+            "tender_type": "Tender Type",
+            "title": "Review & Confirm Metadata"
+        },
+        "status": {
+            "completed": "Completed",
+            "failed": "Failed",
+            "processing": "Processing",
+            "queued": "Queued"
+        },
+        "subtitle": "Upload a tender document (PDF only) and let the system extract metadata. Review or edit the fields and then create a tender.",
+        "title": "Manual Tender Upload",
+        "upload_section": {
+            "choose_file": "Choose File",
+            "hint": "Only PDF supported. Max 10 MB.",
+            "selected": "Selected",
+            "title": "Upload Document",
+            "upload_extract": "Upload & Extract"
+        }
+    }
+}

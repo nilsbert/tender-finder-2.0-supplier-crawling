@@ -1,0 +1,283 @@
+{
+    "common": {
+        "language": "Sprache",
+        "loading": "Lädt...",
+        "error": "Fehler",
+        "success": "Erfolg",
+        "cancel": "Abbrechen",
+        "save": "Speichern",
+        "delete": "Löschen",
+        "start": "Starten",
+        "stop": "Stoppen",
+        "date": "Datum",
+        "description": "Beschreibung",
+        "status": "Status",
+        "environment": {
+            "test": "TESTING",
+            "staging": "STAGING",
+            "production": "PRODUCTION",
+            "local": "DEVELOPMENT",
+            "mode": "MODUS",
+            "database": "Datenbank",
+            "port": "Port"
+        },
+        "previous": "Vorherige",
+        "next": "Nächste",
+        "page": "Seite",
+        "all": "Alle",
+        "manual": "Manuell",
+        "crawled": "Gecrawlt",
+        "reset_filters": "Filter zurücksetzen"
+    },
+    "header": {
+        "title": "Konf. & Tools",
+        "app_title": "Tender AI - Ausschreibungen wieder spaßig machen",
+        "upload": "Manueller Upload",
+        "run": "Crawler starten",
+        "analysis": "Analyse",
+        "config": "Konfiguration",
+        "nav": {
+            "dashboard": "Dashboard",
+            "sourcing": "Sourcing",
+            "qualification": "Qualifikation",
+            "taxonomy": "Taxonomie",
+            "capability": "Fähigkeitsabgleich",
+            "references": "Referenzen & Profile",
+            "governance": "Angebotsprüfung",
+            "iam": "IAM",
+            "settings": "Einstellungen"
+        }
+    },
+    "manual_upload": {
+        "title": "Manueller Upload von Ausschreibungen",
+        "subtitle": "Laden Sie ein Ausschreibungsdokument (nur PDF) hoch und lassen Sie vom System Metadaten extrahieren. Überprüfen oder bearbeiten Sie die Felder und erstellen Sie dann eine Ausschreibung.",
+        "upload_section": {
+            "title": "Dokument hochladen",
+            "hint": "Nur PDF unterstützt. Max 10 MB.",
+            "selected": "Ausgewählt",
+            "choose_file": "Datei wählen",
+            "upload_extract": "Hochladen & Extrahieren"
+        },
+        "review_section": {
+            "title": "Metadaten überprüfen & bestätigen",
+            "hint": "Vorausgefüllt durch KI-Extraktion, wenn verfügbar. Passen Sie alles an, bevor Sie die Ausschreibung erstellen.",
+            "headline": "Überschrift",
+            "caller": "Ausschreibende Stelle",
+            "location": "Ort",
+            "tender_type": "Vergabeart",
+            "est_volume": "Gesch. Volumen",
+            "cpv_codes": "CPV-Codes (kommagetrennt)",
+            "due_date": "Fristende",
+            "published_date": "Veröffentlichungsdatum",
+            "source_url": "Quell-URL",
+            "description": "Beschreibung",
+            "full_text": "Volltext (optional)",
+            "refill": "Aus KI neu befüllen",
+            "create": "Ausschreibung erstellen"
+        },
+        "messages": {
+            "error_pdf_only": "Es werden nur PDF-Dateien akzeptiert.",
+            "error_file_too_large": "Die Datei ist zu groß (max. {{max}} MB).",
+            "error_select_file": "Bitte wählen Sie zuerst eine Datei aus.",
+            "error_missing_upload": "Upload fehlt. Bitte laden Sie zuerst eine Datei hoch.",
+            "error_headline_required": "Überschrift ist erforderlich.",
+            "error_upload_failed": "Upload fehlgeschlagen.",
+            "error_status_check": "Statusprüfung fehlgeschlagen.",
+            "error_create_failed": "Erstellung der Ausschreibung fehlgeschlagen.",
+            "error_refill_empty": "Bitte fügen Sie einen Text ein, bevor Sie die Analyse starten.",
+            "success_created": "Ausschreibung erstellt (ID: {{id}})."
+        },
+        "status": {
+            "queued": "In Warteschlange",
+            "processing": "Wird verarbeitet",
+            "completed": "Abgeschlossen",
+            "failed": "Fehlgeschlagen"
+        }
+    },
+    "crawler_run": {
+        "title": "Crawler ausführen",
+        "subtitle": "Starten Sie einzelne Crawler, um Ausschreibungen aus verschiedenen Quellen abzurufen",
+        "available_crawlers": "Verfügbare Crawler",
+        "portals": "Portale",
+        "companies": "Unternehmen",
+        "latest_data": "Aktuellste Daten",
+        "just_now": "gerade eben",
+        "ago": "vor",
+        "set_limits": "Limits setzen",
+        "hide_limits": "Limits verbergen",
+        "stop_at_date": "Stopp bei Datum",
+        "max_tenders": "Max. Ausschreibungen",
+        "stop_hint": "Stoppt, wenn Ausschreibungen älter als dieses Datum erreicht werden (Standard: vor 7 Tagen)",
+        "max_hint": "Stoppt, wenn die maximale Anzahl an Ausschreibungen erreicht ist (Standard: 500)",
+        "start_crawler": "Crawler starten",
+        "stop_crawler": "Stoppen",
+        "stop_all": "Alle stoppen",
+        "start_all": "Alle starten",
+        "purge_queue": "Warteschlange leeren",
+        "view_logs": "Logs ansehen",
+        "configure_schedule": "Zeitplan konfigurieren",
+        "logs_title": "System Logs",
+        "logs_loading": "Lade Logs...",
+        "logs_empty": "Keine Logs gefunden.",
+        "refresh_logs": "Aktualisieren",
+        "queued": "In Warteschlange",
+        "running": "Läuft...",
+        "messages": {
+            "unsupported": "Dieser Crawler wird derzeit nicht unterstützt.",
+            "error_date_past": "Bitte wählen Sie ein gültiges Datum (muss in der Vergangenheit oder heute liegen).",
+            "error_max_positive": "Die Anzahl der Tender muss eine positive Zahl sein.",
+            "error_max_valid": "Bitte geben Sie eine gültige Zahl für die maximalen Tender ein.",
+            "error_start_failed": "Crawler konnte nicht gestartet werden!"
+        },
+        "progress": {
+            "starting": "Startet...",
+            "queued": "In Warteschlange (warte auf Worker)...",
+            "running_init": "Läuft (Initialisierung)...",
+            "crawled": "{{current}}/{{total}} gecrawlt",
+            "found": "{{count}} Ausschreibungen gefunden...",
+            "completed": "Abgeschlossen. {{count}} Ausschreibungen gefunden{{reason}}.",
+            "failed": "Fehlgeschlagen. {{error}}",
+            "reason_cutoff": " (Stopp bei Datum erreicht)",
+            "reason_max": " (Max. Anzahl erreicht)",
+            "reason_limit": " (Limit erreicht)"
+        },
+        "crawlers": {
+            "ted_austria": {
+                "name": "TED Österreich",
+                "description": "Offizielle EU-Ausschreibungsdatenbank, gefiltert für Österreich. Zielt speziell auf den Ländercode AT ab."
+            },
+            "ted_switzerland": {
+                "name": "TED Schweiz",
+                "description": "Offizielle EU-Ausschreibungsdatenbank, gefiltert für die Schweiz. Zielt auf Schweizer Bekanntmachungen auf TED ab."
+            },
+            "ted_germany": {
+                "name": "TED Deutschland",
+                "description": "Offizielle EU-Ausschreibungsdatenbank, gefiltert für Deutschland. Zielt auf deutsche Bekanntmachungen auf TED ab."
+            },
+            "evergabe": {
+                "name": "Evergabe Online",
+                "description": "Deutsche Bundesvergabeplattform. Zugang zu nationalen öffentlichen Ausschreibungen und Auftragsbekanntmachungen."
+            },
+            "oeffentliche": {
+                "name": "Öffentliche Vergabe",
+                "description": "Umfassendes deutsches Vergabeportal für Bund, Länder und Kommunen."
+            },
+            "simap": {
+                "name": "SIMAP",
+                "description": "Schweizerische Beschaffungsplattform. Offizielles Publikationsorgan für das öffentliche Beschaffungswesen."
+            },
+            "austria": {
+                "name": "Österreich (Bund)",
+                "description": "Österreichisches Bundesvergabeportal. Offizielle Bekanntmachungen österreichischer Bundesbehörden."
+            },
+            "tender24": {
+                "name": "Tender24",
+                "description": "Kommerzielle Ausschreibungsplattform, die mehrere europäische Beschaffungsdatenbanken abdeckt."
+            },
+            "bund": {
+                "name": "Bund.de",
+                "description": "Vergabeportal des Bundes. Offizielle Ausschreibungen von Bundesministerien und Behörden."
+            },
+            "ad": {
+                "name": "Ausschreibungen Deutschland",
+                "description": "Umfassende Datenbank für deutsche öffentliche Ausschreibungen und Auftragsbekanntmachungen aller Branchen."
+            },
+            "tk": {
+                "name": "Techniker Krankenkasse",
+                "description": "Direkt-Crawler für das TK-Vergabeportal (vergabe.tk.de)."
+            },
+            "db": {
+                "name": "Deutsche Bahn",
+                "description": "Direkt-Crawler für das DB-Lieferantenportal."
+            }
+        }
+    },
+    "analysis": {
+        "title": "Crawling-Analyse",
+        "subtitle": "Überwachen Sie das Eingangsvolumen, verfolgen Sie den Crawler-Status und analysieren Sie die Verteilung.",
+        "crawler_activity": "Crawler-Aktivität",
+        "total_tenders": "Gesamt Ausschreibungen",
+        "no_data_chart": "Keine Daten für den gewählten Zeitraum",
+        "no_results": "Keine Ergebnisse für Ihre Suche \"{{search}}\" gefunden. Bitte prüfen Sie Ihre Eingabe.",
+        "filter": {
+            "search_label": "Globale Suche",
+            "search_placeholder": "Suche nach Überschriften, Ausschreibern oder IDs...",
+            "single_day": "Einzeltag",
+            "date_range": "Datumsbereich",
+            "crawl_date": "Crawl-Datum",
+            "published_date": "Veröffentlichungsdatum",
+            "enriched_date": "Anreicherungsdatum",
+            "prev": "Vorheriger",
+            "next": "Nächster",
+            "today": "Heute",
+            "selected_day": "Ausgewählter Tag",
+            "start_date": "Startdatum",
+            "end_date": "Enddatum",
+            "source_label": "Nach Quelle filtern",
+            "all_sources": "Alle Quellen",
+            "portals": "Portale",
+            "companies": "Unternehmen",
+            "office_label": "Nach Büro filtern",
+            "min_score": "Mindestpunktzahl",
+            "any_score": "Jede Punktzahl",
+            "score_positive": "Positiv (0+)",
+            "score_strategic": "Strategisch (20+)",
+            "score_high_value": "Hoher Wert (50+)",
+            "type_label": "Typ",
+            "all_types": "Alle Typen",
+            "subtype_label": "Subtyp",
+            "all_subtypes": "Alle Subtypen",
+            "reset": "Filter zurücksetzen",
+            "type_service": "Dienstleistung",
+            "type_sector": "Sektor"
+        }
+    },
+    "dashboard": {
+        "title": "Bid Manager Dashboard",
+        "subtitle": "Übersicht über die Crawler-Leistung und die Ausschreibungs-Pipeline.",
+        "kpis": {
+            "title": "Performance (letzte 7 Tage)",
+            "loading": "Lade KPIs...",
+            "no_data": "Keine Daten verfügbar",
+            "total_runs": "Gesamte Läufe",
+            "tenders_found": "Gefundene Ausschreibungen",
+            "successful_runs": "Erfolgreiche Läufe",
+            "failed_runs": "Fehlgeschlagene Läufe"
+        },
+        "top_keywords": {
+            "title": "Top Keywords",
+            "loading": "Lade Top Keywords...",
+            "no_data": "Keine Keyword-Übersicht verfügbar"
+        },
+        "funnel": {
+            "title": "Ausschreibungs-Trichter",
+            "scraped": "Gescannt",
+            "analyzed": "Analysiert",
+            "interesting": "Interessant",
+            "bidding": "Bietet an",
+            "won": "Gewonnen",
+            "loading": "Lade Trichter...",
+            "no_data": "Keine Trichter-Daten verfügbar"
+        },
+        "top_tenders": {
+            "title": "Top Ausschreibungen",
+            "loading": "Lade Top-Ausschreibungen...",
+            "no_data": "Keine Daten verfügbar",
+            "no_tenders": "Keine Ausschreibungen gefunden.",
+            "top_10_today": "Top 10 (letzte 24 Std)",
+            "top_10_week": "Top 10 (letzte 7 Tage)",
+            "top_10_month": "Top 10 (letzte 30 Tage)"
+        },
+        "filters": {
+            "context_title": "Kontext-Filter",
+            "offices": "Büros",
+            "sectors": "Sektoren",
+            "services": "Dienstleistungen",
+            "source": "Quelle",
+            "status": "Status",
+            "status_open": "Offen",
+            "status_closed": "Abgeschlossen (Zuschlag)",
+            "status_all": "Alle"
+        }
+    }
+}

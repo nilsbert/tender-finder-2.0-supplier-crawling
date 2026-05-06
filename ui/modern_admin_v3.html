@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="de" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Crawler Dashboard | Tender AI</title>
+    <meta name="description" content="Tender AI Job Crawler Dashboard – Monitor and control web scrapers for job offers from Interamt and EURES.">
+
+    <link rel="preconnect" href="https://cdn.ui.porsche.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- AG Grid -->
+    <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@31.3.2/dist/ag-grid-community.min.js"></script>
+    <link rel="stylesheet" href="https://designsystem.porsche.com/v3/ag-grid/theme/porsche-design-system-ag-grid-theme.css">
+
+    <style>
+        /* ─── Design Tokens ──────────────────────────────────── */
+        :root {
+            --p-bg-surface:       #0e0e12;
+            --p-bg-card:          #18181f;
+            --p-bg-card-hover:    #22222c;
+            --p-bg-input:         #1e1e28;
+            --p-border:           rgba(255,255,255,.06);
+            --p-text:             #e8e8ec;
+            --p-text-muted:       #8b8b9e;
+            --p-accent:           #d5001c;          /* Porsche Red */
+            --p-accent-soft:      rgba(213,0,28,.12);
+            --p-success:          #01ba6d;
+            --p-success-soft:     rgba(1,186,109,.12);
+            --p-warn:             #f5a623;
+            --p-warn-soft:        rgba(245,166,35,.12);
+            --p-info:             #2f80ed;
+            --p-info-soft:        rgba(47,128,237,.12);
+            --p-radius:           12px;
+            --p-radius-sm:        8px;
+            --p-shadow:           0 2px 12px rgba(0,0,0,.35);
+            --p-transition:       .22s cubic-bezier(.4,0,.2,1);
+        }
+
+        /* ─── Reset ──────────────────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        body {
+            font-family: 'Inter', 'Porsche Next', -apple-system, sans-serif;
+            background: var(--p-bg-surface);
+            color: var(--p-text);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        /* ─── Layout ─────────────────────────────────────────── */
+        .shell { max-width: 1440px; margin: 0 auto; padding: 0 0 64px; }
+
+        /* ─── Header ─────────────────────────────────────────── */
+        .main-header {
+            background-color: #0e0e12;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 0 40px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            width: 100%;
+        }
+
+        /* ─── Stat Cards ─────────────────────────────────────── */
+        .stat-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+            padding: 0 40px;
+            margin-top: 32px;
+        }
+        .stat-card {
+            background: var(--p-bg-card);
+            border: 1px solid var(--p-border);
+            border-radius: var(--p-radius);
+            padding: 20px 24px;
+            transition: transform var(--p-transition), box-shadow var(--p-transition);
+        }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: var(--p-shadow); }
+        .stat-label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--p-text-muted); margin-bottom: 6px; }
+        .stat-value { font-size: 28px; font-weight: 700; letter-spacing: -.5px; }
+        .stat-value.accent  { color: var(--p-accent); }
+        .stat-value.success { color: var(--p-success); }
+        .stat-value.info    { color: var(--p-info); }
+
+        /* ─── Section Headings ───────────────────────────────── */
+        .section-title {
+            font-size: 18px; font-weight: 600; margin-bottom: 16px;
+            display: flex; align-items: center; gap: 10px;
+            padding: 0 40px;
+        }
+        .section-title .badge {
+            font-size: 11px; font-weight: 500; padding: 3px 10px;
+            border-radius: 100px;
+            background: var(--p-accent-soft);
+            color: var(--p-accent);
+        }
+        .section-sub { font-size: 13px; color: var(--p-text-muted); margin-bottom: 20px; padding: 0 40px; }
+
+        /* ─── Crawler Cards (Tiles) ──────────────────────────── */
+        .crawler-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 16px;
+            margin-bottom: 40px;
+            padding: 0 40px;
+        }
+        .crawler-card {
+            background: var(--p-bg-card);
+            border: 1px solid var(--p-border);
+            border-radius: var(--p-radius);
+            padding: 20px 24px;
+            display: flex; flex-direction: column; gap: 12px;
+            transition: border-color var(--p-transition), box-shadow var(--p-transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .crawler-card::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: transparent;
+            transition: background var(--p-transition);
+        }
+        .crawler-card:hover { border-color: rgba(255,255,255,.12); box-shadow: var(--p-shadow); }
+        .crawler-card.running::before { background: var(--p-info); }
+        .crawler-card.completed::before { background: var(--p-success); }
+        .crawler-card.failed::before   { background: var(--p-accent); }
+
+        .crawler-header { display: flex; align-items: flex-start; justify-content: space-between; }
+        .crawler-name { font-size: 16px; font-weight: 600; }
+        .crawler-tag {
+            font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .8px;
+            padding: 3px 8px; border-radius: 4px;
+        }
+        .tag-portal    { background: var(--p-info-soft); color: var(--p-info); }
+        .tag-eu        { background: rgba(142,68,255,.12); color: #a67cff; }
+
+        .crawler-desc { font-size: 13px; color: var(--p-text-muted); line-height: 1.55; }
+
+        .crawler-status-row {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 12px; color: var(--p-text-muted);
+        }
+        .status-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+        .status-dot.idle      { background: var(--p-text-muted); }
+        .status-dot.running   { background: var(--p-info); animation: blink 1.4s ease-in-out infinite; }
+        .status-dot.completed { background: var(--p-success); }
+        .status-dot.failed    { background: var(--p-accent); }
+
+        @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+
+        .progress-wrap {
+            width: 100%; height: 0; overflow: hidden; transition: height var(--p-transition);
+        }
+        .progress-wrap.visible { height: 32px; }
+        .progress-bar-bg {
+            width: 100%; height: 4px; background: rgba(255,255,255,.06); border-radius: 2px;
+            margin-top: 4px; overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%; background: linear-gradient(90deg, var(--p-info) 0%, #5ca9ff 100%);
+            width: 0%; transition: width .5s ease; border-radius: 2px;
+        }
+        .progress-meta {
+            display: flex; justify-content: space-between; font-size: 11px; color: var(--p-text-muted); margin-top: 4px;
+        }
+
+        .crawler-actions { display: flex; align-items: center; gap: 8px; margin-top: auto; }
+
+        /* ─── Buttons ────────────────────────────────────────── */
+        .btn {
+            border: none; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 500;
+            border-radius: var(--p-radius-sm); padding: 8px 18px;
+            display: inline-flex; align-items: center; gap: 6px; transition: all var(--p-transition);
+        }
+        .btn-primary { background: var(--p-accent); color: #fff; }
+        .btn-primary:hover:not(:disabled) { background: #b50018; transform: scale(1.02); }
+        .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+        .btn-secondary { background: rgba(255,255,255,.06); color: var(--p-text-muted); }
+        .btn-secondary:hover { background: rgba(255,255,255,.1); color: var(--p-text); }
+
+        .spinner {
+            width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.2);
+            border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ─── AG Grid ────────────────────────────────────────── */
+        #job-grid {
+            height: 600px; width: 100%; margin-top: 24px;
+            --ag-background-color: var(--p-bg-card);
+            --ag-header-background-color: #1c1c24;
+            --ag-odd-row-background-color: #1a1a22;
+            --ag-row-hover-color: rgba(213,0,28,0.08);
+            --ag-selected-row-background-color: rgba(213,0,28,0.15);
+            --ag-header-foreground-color: var(--p-text-muted);
+            --ag-foreground-color: var(--p-text);
+            --ag-border-color: var(--p-border);
+        }
+
+        /* ─── Modal ──────────────────────────────────────────── */
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.7); opacity: 0; visibility: hidden; transition: all .3s; z-index: 1999; }
+        .overlay.visible { opacity: 1; visibility: visible; }
+        .modal {
+            position: fixed; top: 50%; left: 50%; width: 900px; max-width: 95vw; height: 85vh;
+            background: var(--p-bg-card); border: 1px solid var(--p-border); border-radius: var(--p-radius);
+            transform: translate(-50%, -45%) scale(0.95); opacity: 0; visibility: hidden; z-index: 2000;
+            transition: all .3s cubic-bezier(.34, 1.56, 0.64, 1); display: flex; flex-direction: column;
+        }
+        .modal.open { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1); }
+        .modal-header { padding: 24px; border-bottom: 1px solid var(--p-border); display: flex; justify-content: space-between; align-items: center; }
+        .modal-body { flex: 1; overflow-y: auto; padding: 32px; }
+        
+        .audit-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 32px; }
+        .audit-item { background: var(--p-bg-surface); padding: 16px; border-radius: var(--p-radius-sm); border: 1px solid var(--p-border); }
+        .audit-label { font-size: 10px; color: var(--p-text-muted); text-transform: uppercase; margin-bottom: 4px; font-weight: 700; }
+        .audit-value { font-size: 14px; font-weight: 500; }
+
+        #toast-container { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 12px; z-index: 9999; }
+        .toast {
+            background: rgba(24, 24, 31, 0.95); border-left: 4px solid var(--p-accent); padding: 16px 20px;
+            border-radius: var(--p-radius-sm); color: var(--p-text); font-size: 13px; font-weight: 500;
+            backdrop-filter: blur(10px); animation: toast-slide .3s ease forwards; min-width: 300px;
+        }
+        .toast-success { border-left-color: var(--p-success); }
+    </style>
+</head>
+<body>
+<div class="shell">
+    <header class="main-header">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <svg viewBox="0 0 32 32" style="width: 32px; height: 32px;">
+                <rect width="32" height="32" rx="8" fill="#d5001c" />
+                <path d="M8 16L14 10L20 16L14 22Z" fill="#fff" />
+                <path d="M16 13L22 7L28 13L22 19Z" fill="rgba(255,255,255,0.5)" />
+            </svg>
+            <div style="font-size: 16px; font-weight: 600; color: #fff; letter-spacing: -0.02em;">
+                TENDER FINDER <span style="font-weight: 400; opacity: 0.5;">| Job Crawling</span>
+            </div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <div style="display: flex; align-items: center; gap: 8px; padding: 4px 12px; background-color: rgba(1, 186, 109, 0.1); border-radius: 100px; border: 1px solid rgba(1, 186, 109, 0.2);">
+                <div style="width: 8px; height: 8px; border-radius: 50%; background-color: #01ba6d; box-shadow: 0 0 8px rgba(1, 186, 109, 0.4);"></div>
+                <div style="font-size: 11px; color: #01ba6d; font-weight: 700;">SYSTEM ONLINE</div>
+            </div>
+            <button class="btn btn-primary" onclick="triggerGlobalCrawl()">🚀 Run Global Automation</button>
+        </div>
+    </header>
+
+    <!-- ═══ STATS ═══ -->
+    <div class="stat-row">
+        <div class="stat-card">
+            <div class="stat-label">Job Offers gesamt</div>
+            <div class="stat-value accent" id="stat-total">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Interamt Offers</div>
+            <div class="stat-value info" id="stat-interamt">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">EURES Offers</div>
+            <div class="stat-value success" id="stat-eures">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Bund Offers</div>
+            <div class="stat-value info" id="stat-bund">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Award Notices (OCDS)</div>
+            <div class="stat-value success" id="stat-awards">0</div>
+        </div>
+    </div>
+
+    <!-- ═══ ACTIVE CRAWLERS (TILES) ═══ -->
+    <div class="section-title">🌐 Active Scrapers <span class="badge" id="active-badge">0</span></div>
+    <div class="section-sub">Überwachung und Steuerung der aktiven Job-Scraper</div>
+    <div class="crawler-grid" id="crawler-grid"></div>
+
+    <!-- ═══ JOB GRID ═══ -->
+    <div class="section-title">🕒 Recent Job Offers</div>
+    <div style="padding: 0 40px;">
+        <div id="job-grid" class="ag-theme-porsche-dark"></div>
+    </div>
+</div>
+
+<!-- ═══ MODAL ═══ -->
+<div id="overlay" class="overlay" onclick="closeModal()"></div>
+<div id="modal" class="modal">
+    <div class="modal-header">
+        <div>
+            <div style="font-size: 18px; font-weight: 700;" id="modal-title">Job Details</div>
+            <div style="font-size: 12px; color: var(--p-text-muted);" id="modal-id">ID: —</div>
+        </div>
+        <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+    </div>
+    <div class="modal-body" id="modal-content"></div>
+</div>
+
+<div id="toast-container"></div>
+
+<script>
+    const API_BASE = '/api/v1';
+    let gridApi;
+
+    const CRAWLERS = [
+        { id: 'INTERAMT', name: 'Interamt (Stellensuche)', tag: 'portal', desc: 'Offizielles Stellenportal für den öffentlichen Dienst in Deutschland. Crawlt Detailseiten und extrahiert Vollbeschreibungen.' },
+        { id: 'EURES_DE', name: 'EURES Deutschland', tag: 'eu', desc: 'Europäisches Job-Portal, gefiltert für Deutschland (DE). Volltext-Extraktion von Detailseiten.' },
+        { id: 'EURES_AT', name: 'EURES Österreich', tag: 'eu', desc: 'Europäisches Job-Portal, gefiltert für Österreich (AT). Volltext-Extraktion von Detailseiten.' },
+        { id: 'EURES_CH', name: 'EURES Schweiz', tag: 'eu', desc: 'Europäisches Job-Portal, gefiltert für die Schweiz (CH). Volltext-Extraktion von Detailseiten.' },
+        { id: 'BUND_JOBS', name: 'Bund (Stellenangebote)', tag: 'portal', desc: 'Offizielle Stellenbörse der Bundesverwaltung. Nutzt RSS-Feed und Detailseiten-Extraktion.' },
+        { id: 'BUND_AWARDS', name: 'Bund (Vergabe)', tag: 'portal', desc: 'Vergebene Aufträge der Bundesverwaltung. Nutzt den offiziellen RSS-Feed für Ex-Post-Transparenz.' },
+        { id: 'OEFFENTLICHE_VERGABE', name: 'Federal Open Data (OCDS)', tag: 'portal', desc: 'Zentrales Open Data Portal (oeffentlichevergabe.de). Synchronisiert tägliche OCDS-Exporte (Bund/Länder).' },
+        { id: 'TED_AWARDS', name: 'TED European Awards', tag: 'eu', desc: 'Offizielles Supplement zum Amtsblatt der EU. Crawlt Zuschlagsbekanntmachungen für DE, AT und CH.' },
+        { id: 'DELOITTE', name: 'Deloitte', tag: 'company', desc: 'Globaler Wettbewerber. Überwachung von Stellenausschreibungen (Management Consulting).' },
+        { id: 'ACCENTURE', name: 'Accenture', tag: 'company', desc: 'Technologie- und Strategieberatung. Überwachung von Neuausschreibungen (DE).' },
+        { id: 'PORSCHE_5305', name: 'Porsche Consulting', tag: 'company', desc: 'Tochtergesellschaft und Wettbewerber. Fokus auf Management-Beratung.' },
+        { id: 'PORSCHE_3167', name: 'Porsche AG', tag: 'target', desc: 'Strategische Zielgesellschaft. Überwachung von Vakanzen in Fachabteilungen.' },
+        { id: 'WAVESTONE', name: 'Wavestone', tag: 'company', desc: 'Europäische Strategieberatung. Fokus auf IT- und Management-Positionen.' }
+    ];
+
+    const state = {
+        INTERAMT: { status: 'idle', found: 0, processed: 0, end: null },
+        EURES_DE: { status: 'idle', found: 0, processed: 0, end: null },
+        EURES_AT: { status: 'idle', found: 0, processed: 0, end: null },
+        EURES_CH: { status: 'idle', found: 0, processed: 0, end: null },
+        BUND_JOBS: { status: 'idle', found: 0, processed: 0, end: null },
+        BUND_AWARDS: { status: 'idle', found: 0, processed: 0, end: null },
+        OEFFENTLICHE_VERGABE: { status: 'idle', found: 0, processed: 0, end: null },
+        TED_AWARDS: { status: 'idle', found: 0, processed: 0, end: null },
+        DELOITTE: { status: 'idle', found: 0, processed: 0, end: null },
+        ACCENTURE: { status: 'idle', found: 0, processed: 0, end: null },
+        PORSCHE_5305: { status: 'idle', found: 0, processed: 0, end: null },
+        PORSCHE_3167: { status: 'idle', found: 0, processed: 0, end: null },
+        WAVESTONE: { status: 'idle', found: 0, processed: 0, end: null }
+    };
+
+    const columnDefs = [
+        { field: 'source_system', headerName: 'Source', width: 140, filter: true, 
+          cellRenderer: params => `<span style="background:rgba(47,128,237,0.1); color:#2f80ed; padding:2px 8px; border-radius:4px; font-size:10px; font-weight:700;">${params.value}</span>` },
+        { field: 'category', headerName: 'Category', width: 130, filter: true,
+          cellRenderer: params => {
+              const color = params.value === 'PUBLIC_SECTOR' ? '#01ba6d' : (params.value === 'COMPETITOR' ? '#d5001c' : '#f5a623');
+              return `<span style="border:1px solid ${color}; color:${color}; padding:1px 6px; border-radius:4px; font-size:10px; font-weight:600;">${params.value}</span>`;
+          }},
+        { field: 'employer', headerName: 'Employer', width: 220, filter: true },
+        { field: 'title', headerName: 'Position Title', flex: 1, filter: true,
+          cellRenderer: params => `<span style="font-weight:600; color:#fff;">${params.value}</span>` },
+        { field: 'location', headerName: 'Location', width: 180, filter: true },
+        { field: 'deadline_at', headerName: 'Deadline', width: 130, valueFormatter: p => p.value ? new Date(p.value).toLocaleDateString() : '—' },
+        { headerName: 'Actions', width: 120, cellRenderer: params => `
+            <button class="btn btn-secondary" style="padding:4px 10px; font-size:11px;" onclick="viewDetails('${params.data.external_id}')">Details</button>
+        `}
+    ];
+
+    const gridOptions = {
+        columnDefs: columnDefs,
+        rowData: [],
+        pagination: true,
+        paginationPageSize: 20,
+        domLayout: 'normal',
+        defaultColDef: { resizable: true, sortable: true }
+    };
+
+    // Initialization
+    document.addEventListener('DOMContentLoaded', () => {
+        const gridDiv = document.querySelector('#job-grid');
+        try {
+            gridApi = agGrid.createGrid(gridDiv, gridOptions);
+            console.log('ag-Grid initialized successfully');
+        } catch (e) {
+            console.error('ag-Grid initialization failed:', e);
+        }
+        
+        refreshData();
+        renderCards();
+        initWebSockets();
+    });
+
+    async function refreshData() {
+        if (!gridApi || typeof gridApi.setGridOption !== 'function') {
+            console.warn('ag-Grid API not ready yet');
+            return;
+        }
+        try {
+            const [offers, jobs, awards] = await Promise.all([
+                fetch(`${API_BASE}/offers`).then(r => r.json()),
+                fetch(`${API_BASE}/jobs`).then(r => r.json()),
+                fetch(`${API_BASE}/awards`).then(r => r.json().catch(() => []))
+            ]);
+            
+            gridApi.setGridOption('rowData', offers);
+            updateStats(offers, awards);
+            updateJobState(jobs);
+            renderCards();
+        } catch (e) {
+            console.error('Refresh failed', e);
+        }
+    }
+
+    function updateStats(offers, awards = []) {
+        document.getElementById('stat-total').innerText = offers.length;
+        document.getElementById('stat-interamt').innerText = offers.filter(o => o.source_system === 'INTERAMT').length;
+        document.getElementById('stat-eures').innerText = offers.filter(o => o.source_system.startsWith('EURES')).length;
+        document.getElementById('stat-bund').innerText = offers.filter(o => o.source_system.startsWith('BUND')).length;
+        document.getElementById('stat-awards').innerText = awards.length;
+    }
+
+    function updateJobState(jobs) {
+        let activeCount = 0;
+        CRAWLERS.forEach(c => {
+            const source = c.id;
+            const job = jobs.find(j => j.crawler_id.includes(source) && (j.status === 'running' || j.status === 'starting'));
+            if (job) {
+                state[source].status = job.status;
+                state[source].processed = job.tenders_found;
+                state[source].found = job.tenders_found;
+                activeCount++;
+            } else {
+                const lastJob = jobs.find(j => j.crawler_id.includes(source));
+                if (lastJob) {
+                    state[source].status = lastJob.status;
+                    state[source].found = lastJob.tenders_found;
+                    state[source].end = lastJob.end_time;
+                }
+            }
+        });
+        document.getElementById('active-badge').innerText = activeCount;
+    }
+
+    function renderCards() {
+        const container = document.getElementById('crawler-grid');
+        if (!container) return;
+        
+        container.innerHTML = CRAWLERS.map(c => {
+            const s = state[c.id] || { status: 'idle', found: 0 };
+            const isRunning = s.status === 'running' || s.status === 'starting';
+            const statusColor = isRunning ? '#2f80ed' : (s.status === 'completed' ? '#01ba6d' : '#888');
+            
+            return `
+                <div class="crawler-card ${isRunning ? 'running' : ''} ${s.status === 'completed' ? 'completed' : ''}">
+                    <div class="crawler-header">
+                        <div class="crawler-name">${c.name}</div>
+                        <span class="crawler-tag tag-${c.tag}">${c.tag}</span>
+                    </div>
+                    <div class="crawler-status-row">
+                        <span class="status-dot ${s.status}"></span>
+                        <span style="text-transform:uppercase; letter-spacing:0.5px;">${s.status}</span>
+                    </div>
+                    <div class="crawler-desc">${c.desc}</div>
+                    <div class="crawler-actions">
+                        <div style="font-size:12px; font-weight:600; color:#fff;">${s.found} <span style="font-size:10px; font-weight:400; color:var(--p-text-muted);">found</span></div>
+                        <button class="btn btn-primary" style="margin-left:auto;" onclick="runCrawler('${c.id}')" ${isRunning ? 'disabled' : ''}>
+                            ${isRunning ? 'Running...' : 'Run Scraper'}
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    async function runCrawler(sourceId) {
+        showToast(`Starte ${sourceId} Scraper...`, 'info');
+        let endpoint;
+        if (sourceId === 'INTERAMT') endpoint = '/crawl/interamt';
+        else if (sourceId.startsWith('EURES')) endpoint = '/crawl/eures';
+        else if (sourceId === 'BUND_JOBS') endpoint = '/crawl/bund/jobs';
+        else if (sourceId === 'BUND_AWARDS') endpoint = '/crawl/bund/awards';
+        else if (sourceId === 'OEFFENTLICHE_VERGABE') endpoint = '/crawl/oeffentliche-vergabe';
+        else if (sourceId === 'TED_AWARDS') endpoint = '/crawl/ted';
+        else if (sourceId === 'DELOITTE') endpoint = '/crawl/deloitte';
+        else if (sourceId === 'ACCENTURE') endpoint = '/crawl/accenture';
+        else if (sourceId === 'PORSCHE_5305') endpoint = '/crawl/porsche/competitor';
+        else if (sourceId === 'PORSCHE_3167') endpoint = '/crawl/porsche/target';
+        else if (sourceId === 'WAVESTONE') endpoint = '/crawl/wavestone';
+        
+        try {
+            await fetch(`${API_BASE}${endpoint}`, { method: 'POST' });
+            setTimeout(refreshData, 1000);
+        } catch (e) {
+            showToast('Fehler beim Starten', 'error');
+        }
+    }
+
+    async function triggerGlobalCrawl() {
+        showToast('🚀 Global automation sweep initiated...', 'info');
+        try {
+            await fetch(`${API_BASE}/crawl/all`, { method: 'POST' });
+            refreshData();
+        } catch (e) {
+            showToast('Failed to start global crawl', 'error');
+        }
+    }
+
+    async function viewDetails(externalId) {
+        const allOffers = [];
+        gridApi.forEachNode(node => allOffers.push(node.data));
+        const job = allOffers.find(o => o.external_id === externalId);
+        if (!job) return;
+
+        document.getElementById('modal-title').innerText = job.title;
+        document.getElementById('modal-id').innerText = `External ID: ${job.external_id}`;
+        document.getElementById('modal-content').innerHTML = `
+            <div class="audit-grid">
+                <div class="audit-item"><div class="audit-label">Employer</div><div class="audit-value">${job.employer}</div></div>
+                <div class="audit-item"><div class="audit-label">Source</div><div class="audit-value">${job.source_system}</div></div>
+                <div class="audit-item"><div class="audit-label">Location</div><div class="audit-value">${job.location || '—'}</div></div>
+                <div class="audit-item"><div class="audit-label">Salary Group</div><div class="audit-value">${job.salary_group || '—'}</div></div>
+                <div class="audit-item" style="grid-column: span 2;"><div class="audit-label">Source Link</div><div class="audit-value"><a href="${job.link}" target="_blank" style="color:var(--p-info);">${job.link}</a></div></div>
+            </div>
+            <div class="audit-item">
+                <div class="audit-label">Full Job Description</div>
+                <div style="white-space: pre-wrap; font-size: 13px; line-height: 1.6; color: var(--p-text); max-height: 400px; overflow-y: auto; padding-top: 8px;">
+                    ${job.description || '<span style="color:var(--p-warn); font-style:italic;">No description captured yet.</span>'}
+                </div>
+            </div>
+        `;
+        document.getElementById('overlay').classList.add('visible');
+        document.getElementById('modal').classList.add('open');
+    }
+
+    function closeModal() {
+        document.getElementById('overlay').classList.remove('visible');
+        document.getElementById('modal').classList.remove('open');
+    }
+
+    function showToast(msg, type = 'success') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.innerHTML = `<span>${msg}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => {
+            toast.style.animation = 'toast-fadeout 0.3s ease forwards';
+            setTimeout(() => toast.remove(), 300);
+        }, 4000);
+    }
+
+    function initWebSockets() {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${protocol}//${window.location.host}/ws/jobs`;
+        console.log(`Connecting to WebSocket: ${wsUrl}`);
+        
+        try {
+            const socket = new WebSocket(wsUrl);
+            
+            socket.onopen = () => {
+                console.log('WebSocket connection established');
+            };
+            
+            socket.onmessage = (event) => {
+                try {
+                    const msg = JSON.parse(event.data);
+                    if (msg.type === 'job_update') {
+                        console.log('Received job update via WebSocket, refreshing...');
+                        refreshData();
+                    }
+                } catch (e) {
+                    console.error('Failed to parse WebSocket message:', e);
+                }
+            };
+            
+            socket.onerror = (error) => {
+                console.error('WebSocket error observed:', error);
+            };
+            
+            socket.onclose = (event) => {
+                console.warn(`WebSocket closed (code: ${event.code}). Reconnecting in 5s...`);
+                setTimeout(initWebSockets, 5000);
+            };
+        } catch (e) {
+            console.error('WebSocket initialization failed:', e);
+            setTimeout(initWebSockets, 5000);
+        }
+    }
+</script>
+</body>
+</html>

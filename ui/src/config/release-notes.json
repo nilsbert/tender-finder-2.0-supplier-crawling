@@ -1,0 +1,249 @@
+[
+    {
+        "version": "2.0.0",
+        "date": "2026-03-14",
+        "title": "AI Status Detection & Universal Filtering",
+        "changes": [
+            "Implemented AI-based Tender Status Detection (feat-073) for automatic 'Open/Closed' classification.",
+            "Introduced the Universal Status Filter across Dashboard and Sourcing Workbench.",
+            "Added 'Contract Info' Admin view for manual status reclassification and data verification.",
+            "Localized filter controls and status badges in English and German.",
+            "Synchronized Production Azure SQL schema with latest architectural requirements."
+        ]
+    },
+    {
+        "version": "1.9.8",
+        "date": "2026-02-19",
+        "title": "Hotfix: Force Staging Auth (Retry)",
+        "changes": [
+            "Temporarily forced Staging Authentication logic on Production to resolve Azure AD configuration issues.",
+            "Users will be automatically logged in as Administrator."
+        ]
+    },
+    {
+        "version": "1.9.6",
+        "date": "2026-02-18",
+        "title": "Hotfix: Easy Auth Support",
+        "changes": [
+            "Enabled automatic identity detection for users authenticated via Azure App Service (Easy Auth).",
+            "Reduced reliance on client-side login for authenticated sessions."
+        ]
+    },
+    {
+        "version": "1.9.4",
+        "date": "2026-02-18",
+        "title": "Hotfix: Login Button Reliability",
+        "changes": [
+            "Reverted 'Silent Login' on button click to resolve browser popup blocker issues.",
+            "Ensured 'Login' button reliably opens the authentication popup."
+        ]
+    },
+    {
+        "version": "1.9.3",
+        "date": "2026-02-18",
+        "title": "Hotfix: Silent Login & Robustness",
+        "changes": [
+            "Improved Login flow to attempt silent SSO first.",
+            "Prevented 'Interaction in Progress' errors during authentication."
+        ]
+    },
+    {
+        "version": "1.9.2",
+        "date": "2026-02-18",
+        "title": "Hotfix: Login Visibility",
+        "changes": [
+            "Added explicit 'Login' button in header for unauthenticated users.",
+            "Ensured access to Admin/User role information in production."
+        ]
+    },
+    {
+        "version": "1.9.1",
+        "date": "2026-02-18",
+        "title": "Hotfix: Release Notes Schema",
+        "changes": [
+            "Fixed a schema mismatch in release notes configuration that caused application crash on startup.",
+            "Ensured proper loading of Admin User Management features."
+        ]
+    },
+    {
+        "version": "1.9.0",
+        "date": "2026-02-18",
+        "title": "Admin User Management & UI Overhaul",
+        "changes": [
+            "Simplified Header Design (Pill Buttons)",
+            "Unified Status Stack (Environment/DB/Role)",
+            "Admin Whitelist Management View",
+            "Improved Profile Popover"
+        ]
+    },
+    {
+        "version": "1.8.0",
+        "date": "2026-02-18",
+        "title": "Kontext-Filter for Sourcing Workbench",
+        "changes": [
+            "Implemented the 'Kontext-Filter' (Office, Sector, Service) in the Sourcing Workbench.",
+            "Integrated detailed AI enrichment metadata for precision filtering.",
+            "Added support for persistent context filters in Saved Views.",
+            "Refactored backend search logic for improved performance and consistency.",
+            "Enhanced filter UI with collapsible sections and active filter badges."
+        ]
+    },
+    {
+        "version": "1.7.0",
+        "date": "2026-02-14",
+        "title": "Fix: Timestamp Paradox & Ingestion Stability",
+        "changes": [
+            "Fixed 'Timestamp Paradox' by shifting dashboard ranking filters from creation time to update time.",
+            "Refactored Crawler Ingestion to use centralized decoupled persistence logic, ensuring correct database distribution.",
+            "Patched diagnostic API endpoints to fix SQLAlchemy 2.0 regressions and restore visibility.",
+            "Verified live end-to-end ingestion from TED Germany crawler in staging."
+        ]
+    },
+    {
+        "version": "1.6.8",
+        "date": "2026-02-13",
+        "title": "Fix: Proxy Argument Alignment",
+        "changes": [
+            "Fixed bug in database proxy layer that caused rerate worker failure.",
+            "Verified session safety and diagnostic accuracy in staging environment."
+        ]
+    },
+    {
+        "version": "1.6.7",
+        "date": "2026-02-13",
+        "title": "Hotfix: Diagnostic Consistency",
+        "changes": [
+            "Fixed regression in diagnostic API endpoint by correcting session lifecycle management.",
+            "Ensured consistent database session factory behavior across all domain layers."
+        ]
+    },
+    {
+        "version": "1.6.6",
+        "date": "2026-02-13",
+        "title": "Hotfix: Connection Lifecycle & Diagnostics",
+        "changes": [
+            "Refactored database iterators to ensure sessions are closed before yielding data, preventing connection leaks during long-running background tasks.",
+            "Added diagnostic API endpoints to monitor tender counts and rating status.",
+            "Improved error handling in rerate worker to prevent stagnant connections."
+        ]
+    },
+    {
+        "version": "1.6.5",
+        "date": "2026-02-13",
+        "title": "Hotfix: Rerate Worker Optimization",
+        "changes": [
+            "Optimized background rerate worker to target only unrated tenders, significantly improving performance.",
+            "Added database-level filtering for unrated tenders to reduce iteration overhead.",
+            "Technical redeploy to trigger processing of newly scraped tenders."
+        ]
+    },
+    {
+        "version": "1.6.4",
+        "date": "2026-02-13",
+        "title": "Hotfix: Connection Pool Optimization & Deployment Refresh",
+        "changes": [
+            "Fixed SQLAlchemy connection leaks in background workers by refactoring long-running database iterators.",
+            "Optimized crawler persistence logic to use batch sessions, reducing database overhead.",
+            "Technical redeploy to ensure the latest v1.6.2/v1.6.3 logic is fully active on production."
+        ]
+    },
+    {
+        "version": "1.6.3",
+        "date": "2026-02-13",
+        "title": "Hotfix: Scoring Worker & Domain Relaxing (Redeploy)",
+        "changes": [
+            "Fixed a crash in the background scoring worker (AttributeError: 'dict' object has no attribute 'id').",
+            "Relaxed strict domain regex patterns to prevent rating failures on tenders with valid punctuation (colons, semicolons).",
+            "Technical redeploy to ensure fixes are active on production environment."
+        ]
+    },
+    {
+        "version": "1.6.2",
+        "date": "2026-02-13",
+        "title": "Hotfix: Scoring Worker & Domain Relaxing",
+        "changes": [
+            "Initial attempt to fix background scoring worker crash and relax domain validation."
+        ]
+    },
+    {
+        "version": "1.6.1",
+        "date": "2026-02-13",
+        "title": "Minor Hotfix: Dashboard Restore",
+        "changes": [
+            "Fixed a database schema mismatch that caused the dashboard to return 500 errors after the 1.6.0 release.",
+            "Ensured all tenders are correctly displayed in 'Top Tenders' sections."
+        ]
+    },
+    {
+        "version": "1.6.0",
+        "date": "2026-02-13",
+        "title": "Mandatory Taxonomy Matching",
+        "changes": [
+            "Refactored AI Enrichment to make Stage 7 (Taxonomy Matching) mandatory.",
+            "Integrated detailed semantic descriptions for Sectors and Services into LLM prompts.",
+            "Implemented new 'Taxonomy Management' UI for rich category definitions.",
+            "Standardized Prompt Template Library with dedicated Label Matching controls.",
+            "Enhanced pipeline robustness with validated description-based matching pattern."
+        ]
+    },
+    {
+        "version": "1.5.0",
+        "date": "2026-02-11",
+        "title": "Keyword Stability & Range",
+        "changes": [
+            "Fixed Keyword Management stability issues (slider modal closing, drag-to-delete).",
+            "Added full -5 to +5 scoring range for precise weighting.",
+            "Implemented polarity-based type derivation (Negative = Exclusion, Positive = Service).",
+            "Enhanced Keyword Trash Zone with custom collision detection.",
+            "Re-enabled standard modal close behavior."
+        ]
+    },
+    {
+        "version": "1.4.0",
+        "date": "2026-02-05",
+        "title": "Release Notes UI Improvement",
+        "changes": [
+            "Moved release notes from static dashboard section to a persistent header modal.",
+            "Integrated notification dot on 'Release Notes' button to highlight new updates.",
+            "Implemented custom useReleaseNotes hook with LocalStorage tracking.",
+            "Utilized Porsche Design System for a premium, accessible modal experience.",
+            "Removed legacy release notes from the dashboard for a cleaner user interface."
+        ]
+    },
+    {
+        "version": "1.3.0",
+        "date": "2026-02-05",
+        "title": "Dashboard Search Tests",
+        "changes": [
+            "Added comprehensive Vitest test infrastructure with jsdom environment.",
+            "Implemented 13 unit tests for search filtering logic (case-insensitive, special characters, partial matches).",
+            "Implemented 6 component tests for search input functionality.",
+            "All 19 tests passing with automated test scripts (npm test, npm run test:ui, npm run test:coverage).",
+            "Documented implementation plan and test results for Issue #49."
+        ]
+    },
+    {
+        "version": "1.2.0",
+        "date": "2026-02-05",
+        "title": "Environment Labeling Standardization",
+        "changes": [
+            "Standardized environment modes: DEVELOPMENT, TESTING, STAGING, PRODUCTION.",
+            "Implemented robust backend detection for deployment tiers.",
+            "Refactored frontend EnvironmentBadge to use centralized mode detection.",
+            "Added support for explicit TESTING environment for QA.",
+            "Visual color-coded status badges for different tiers (Red/Caution for Production)."
+        ]
+    },
+    {
+        "version": "1.1.0",
+        "date": "2026-02-04",
+        "title": "Full Text Search & Dashboard Polish",
+        "changes": [
+            "Expanded search engine to include 'full_text' and 'contact_name' fields.",
+            "Debounced search input (300ms) for optimized performance.",
+            "Relocated search field below the Performance KPI grid.",
+            "Removed redundant 'Top Tenders' headline for a cleaner layout.",
+            "Consolidated backend ranking logic for better maintainability."
+        ]
+    }
+]

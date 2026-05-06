@@ -1,0 +1,146 @@
+/* PDF/Paper Document Style for AI Bid Strategy */
+.pdf-document-container {
+    background-color: white;
+    padding: 40px 48px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 14px -1px rgba(0, 0, 0, 0.08); /* Elevated shadow */
+    border-radius: 2px;
+    border: 1px solid #e5e5e5;
+    font-family: 'Porsche Next', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: #1a1a1a;
+    line-height: 1.6;
+    max-width: 21cm; /* A4 width approx */
+    margin: 0 auto; /* Center it if container allows */
+    position: relative;
+    overflow: hidden; /* For header strip */
+}
+
+/* Subtle top strip to make it look official */
+.pdf-document-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, #d5001c 0%, #900010 100%); /* Porsche-like Red */
+}
+
+/* One-Pager Footer (link + QR) */
+.onepager-footer {
+    margin-top: 32px;
+    border-top: 1px solid #eee;
+    padding-top: 16px;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    color: #666;
+    font-size: 12px;
+}
+
+.onepager-footer a {
+    color: #d5001c;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+
+.onepager-footer a:hover {
+    text-decoration: underline;
+}
+
+.onepager-footer-left {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.onepager-footer-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    min-width: 120px;
+}
+
+/* Markdown Typography Styles */
+.markdown-content h1 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-top: 24px;
+    margin-bottom: 16px;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 8px;
+    color: #1a1a1a;
+}
+
+.markdown-content h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-top: 20px;
+    margin-bottom: 12px;
+    color: #333;
+}
+
+.markdown-content h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-top: 16px;
+    margin-bottom: 8px;
+    color: #444;
+}
+
+.markdown-content p {
+    margin-bottom: 16px;
+    font-size: 16px;
+    color: #333;
+    text-align: justify;
+}
+
+.markdown-content ul, .markdown-content ol {
+    margin-bottom: 16px;
+    padding-left: 24px;
+}
+
+.markdown-content li {
+    margin-bottom: 6px;
+    padding-left: 4px;
+}
+
+.markdown-content li::marker {
+    color: #d5001c; /* Red bullets */
+}
+
+.markdown-content strong {
+    font-weight: 700;
+    color: #000;
+}
+
+.markdown-content blockquote {
+    border-left: 4px solid #d5001c;
+    padding-left: 16px;
+    margin-left: 0;
+    margin-right: 0;
+    font-style: italic;
+    color: #555;
+    background-color: #f9f9f9;
+    padding: 12px 16px;
+}
+
+.markdown-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.markdown-content th {
+    text-align: left;
+    border-bottom: 2px solid #ddd;
+    padding: 8px;
+    font-weight: 600;
+}
+
+.markdown-content td {
+    border-bottom: 1px solid #eee;
+    padding: 8px;
+}
