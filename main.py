@@ -19,6 +19,15 @@ from core.database import SessionLocal, init_db
 from core.scheduler import init_scheduler
 from core.websocket_manager import ws_manager
 from dotenv import load_dotenv
+
+import os
+if os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING"):
+    try:
+        from azure.monitor.opentelemetry import configure_azure_monitor
+        configure_azure_monitor()
+    except ImportError:
+        pass
+
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
@@ -75,7 +84,7 @@ app = FastAPI(title="Supplier Crawling Microservice", lifespan=lifespan)
 # CORS — allow frontend integration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=os.getenv("ALLOWED_ORIGINS", "http://localhost:8009").split(","),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
