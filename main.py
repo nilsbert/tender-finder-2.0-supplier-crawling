@@ -61,8 +61,8 @@ async def lifespan(app: FastAPI):
             if result.rowcount > 0:
                 logger.info(f"🧹 Cleaned up {result.rowcount} stale jobs from previous session")
 
-        await init_scheduler()
-        logger.info("✅ Startup complete")
+        # await init_scheduler()
+        logger.info("✅ Startup complete (JIT Mode)")
     except Exception as e:
         logger.error(f"❌ Startup error: {e}", exc_info=True)
 

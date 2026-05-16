@@ -1,63 +1,37 @@
 import React from 'react';
 
-
-interface StandardSubNavigationProps {
-    children: React.ReactNode;
-}
-
-export const StandardSubNavigation: React.FC<StandardSubNavigationProps> = ({ children }) => {
+export const StandardSubNavigation: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     return (
         <div style={{
-            backgroundColor: '#fafafa',
-            borderBottom: '1px solid #e0e0e0'
+            backgroundColor: 'rgba(255, 255, 255, 0.02)',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+            backdropFilter: 'blur(10px)',
+            position: 'sticky',
+            top: '64px',
+            zIndex: 900
         }}>
-            <div className="p-content-wrapper">
-                <div style={{
-                    padding: '0 24px',
-                    display: 'flex',
-                    gap: '24px'
-                }}>
-                    {children}
-                </div>
+            <div style={{ padding: '0 40px', display: 'flex', gap: '24px' }}>
+                {children}
             </div>
         </div>
     );
 };
 
-interface StandardSubNavigationItemProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    label: string;
-    active: boolean;
-    as?: React.ElementType;
-    to?: string; // For router links
-    [key: string]: any;
-}
-
-export const StandardSubNavigationItem: React.FC<StandardSubNavigationItemProps> = ({
-    label,
-    active,
-    as,
-    style,
-    ...props
-}) => {
-    const baseStyle = {
-        padding: '16px 0',
-        border: 'none',
-        background: 'none',
-        cursor: 'pointer',
-        color: active ? 'var(--tf-accent)' : '#666',
-        borderBottom: active ? '2px solid var(--tf-accent)' : '2px solid transparent',
-        fontWeight: active ? 'bold' : 'normal',
-        fontSize: '14px',
-        transition: 'all 0.2s',
-        display: 'inline-block',
-        textDecoration: 'none', // Important if rendered as a link
-        ...style // Allow manual overrides
-    };
-
-    const Component = as || 'button';
-
+export const StandardSubNavigationItem: React.FC<{ as: any, to: string, label: string, active: boolean }> = ({ as: Component, to, label, active }) => {
     return (
-        <Component style={baseStyle} {...props}>
+        <Component
+            to={to}
+            style={{
+                textDecoration: 'none',
+                padding: '12px 0',
+                fontSize: '12px',
+                fontWeight: active ? '700' : '500',
+                color: active ? 'var(--tf-accent)' : 'var(--tf-text-secondary)',
+                borderBottom: active ? '2px solid var(--tf-accent)' : '2px solid transparent',
+                transition: 'all 0.2s ease',
+                display: 'inline-block'
+            }}
+        >
             {label}
         </Component>
     );

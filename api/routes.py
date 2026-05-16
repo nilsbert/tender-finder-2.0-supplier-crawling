@@ -10,11 +10,26 @@ from core.database import get_db
 from core.executor import crawler_executor
 from core.job_offer_service import JobOfferService
 from core.tender_notice_service import TenderNoticeService
+from core.supplier_service import SupplierService
 from models.job import CrawlerJobORM
 from api.schemas import JobOfferSchema, TenderWinningNoticeSchema
 
 router = APIRouter()
 logger = logging.getLogger("api-routes")
+
+@router.get("/supplier/caller-history")
+async def get_caller_history(caller_name: str, portal: str = "ted", db: AsyncSession = Depends(get_db)):
+    """
+    JIT search for past awards of a contracting authority.
+    Uses local cache if available.
+    """
+    service = SupplierService(db)
+    caller_id = await service.resolve_caller_id(caller_name, portal=portal)
+    history = await service.get_caller_history(caller_name, portal=portal)
+    return {
+        "caller_id": caller_id,
+        "history": history
+    }
 
 
 @router.post("/crawl/interamt")

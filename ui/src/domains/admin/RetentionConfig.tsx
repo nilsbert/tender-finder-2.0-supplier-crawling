@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import {PHeading,
+import {
+    PHeading,
     PText,
     PButton,
     PFlex,
     PInlineNotification,
     PDivider,
-    
-    PTextFieldWrapper} from '@porsche-design-system/components-react';
+    PModal,
+    PTextFieldWrapper
+} from '../../pds-wrapper';
 import { StandardPageHeader } from '../../components/StandardPageHeader';
 import { adminApi, type RetentionConfig, type CleanupStats } from './api';
 
@@ -18,6 +20,7 @@ const RetentionConfigView: React.FC = () => {
     const [statusMessage, setStatusMessage] = useState('');
     const [statusType, setStatusType] = useState<'success' | 'error' | 'info'>('info');
     const [daysInput, setDaysInput] = useState<string>('30');
+    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
     useEffect(() => {
         loadConfig();
@@ -62,9 +65,11 @@ const RetentionConfigView: React.FC = () => {
     };
 
     const handleTriggerCleanup = async () => {
-        if (!window.confirm('Are you sure you want to trigger the cleanup job manually? This will delete old tenders and enrichment data permanently.')) {
-            return;
-        }
+        setIsConfirmModalOpen(true);
+    };
+
+    const confirmCleanup = async () => {
+        setIsConfirmModalOpen(false);
 
         setTriggering(true);
         setStatusMessage('');
@@ -140,16 +145,33 @@ const RetentionConfigView: React.FC = () => {
                         You can manually trigger the cleanup job. This will use the current retention period set above.
                     </PText>
                     <PButton
-                        variant="tertiary"
+                        variant="secondary"
                         icon="delete"
                         onClick={handleTriggerCleanup}
                         loading={triggering}
                         disabled={saving || triggering}
                     >
-                        Run Cleanup Now
                     </PButton>
                 </div>
             </div>
+
+            <PModal
+                open={isConfirmModalOpen}
+                onDismiss={() => setIsConfirmModalOpen(false)}
+                heading="Confirm Manual Cleanup"
+            >
+                <PText>
+                    Are you sure you want to trigger the cleanup job manually? This will delete old tenders and enrichment data permanently according to the current policy.
+                </PText>
+                <PFlex style={{ gap: '16px', marginTop: '24px' }} justifyContent="end">
+                    <PButton variant="secondary" onClick={() => setIsConfirmModalOpen(false)}>
+                        Cancel
+                    </PButton>
+                    <PButton variant="primary" onClick={confirmCleanup} loading={triggering}>
+                        Run Cleanup
+                    </PButton>
+                </PFlex>
+            </PModal>
         </div>
     );
 };

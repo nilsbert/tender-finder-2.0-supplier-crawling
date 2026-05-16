@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import {PButton,
+import {
+    PButton,
     PFlex,
     PFlexItem,
     PHeading,
@@ -9,7 +10,9 @@ import {PButton,
     PTextarea,
     PTabs,
     PTabsItem,
-    PLink} from '@porsche-design-system/components-react'
+    PModal,
+    PLink
+} from '../../pds-wrapper';
 import { StandardPageHeader } from '../../components/StandardPageHeader'
 import { api as enrichingApi, type EnrichmentConfig } from './api'
 import { aiApi, type AIConnectorConfig } from '../ai/api'
@@ -46,6 +49,7 @@ const EnrichingConfigView: React.FC = () => {
     const [saving, setSaving] = useState(false)
     const [notification, setNotification] = useState<{ status: 'success' | 'error', message: string } | null>(null)
     const [activeTab, setActiveTab] = useState(0)
+    const [isForceModalOpen, setIsForceModalOpen] = useState(false)
     const [offices, setOffices] = useState<DistributionOffice[]>([])
     const [labels, setLabels] = useState<Label[]>([])
 
@@ -102,7 +106,11 @@ const EnrichingConfigView: React.FC = () => {
     }
 
     const handleRunForceBatch = async () => {
-        if (!window.confirm("This will re-enrich ALL tenders, even those already completed. This can consume many AI tokens. Continue?")) return;
+        setIsForceModalOpen(true)
+    }
+
+    const confirmForceBatch = async () => {
+        setIsForceModalOpen(false)
         setSaving(true)
         setNotification(null)
         try {
@@ -176,7 +184,7 @@ const EnrichingConfigView: React.FC = () => {
                     </div>
 
                     <form onSubmit={handleSave} style={{ marginTop: '24px' }}>
-                        <PTabs activeTabIndex={activeTab} onTabChange={(e: CustomEvent) => setActiveTab(e.detail.activeTabIndex)}>
+                        <PTabs activeTabIndex={activeTab} onUpdate={(e: any) => setActiveTab(e.activeTabIndex)}>
                             <PTabsItem label="General">
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', paddingTop: '24px' }}>
                                     <PText>Global settings for the enrichment pipeline.</PText>
@@ -219,14 +227,14 @@ const EnrichingConfigView: React.FC = () => {
                                             </PFlexItem>
 
                                             <PFlexItem>
-                                                <PButton variant="tertiary" onClick={handleRetryAll} loading={saving}>
+                                                <PButton variant="secondary" onClick={handleRetryAll} loading={saving}>
                                                     Retry Failed items
                                                 </PButton>
                                                 <PText size="x-small" style={{ marginTop: '4px' }}>Retry all items with FAILED status</PText>
                                             </PFlexItem>
 
                                             <PFlexItem>
-                                                <PButton variant="tertiary" onClick={handleRunForceBatch} loading={saving} icon="delete">
+                                                <PButton variant="secondary" onClick={handleRunForceBatch} loading={saving} icon="delete">
                                                     Force Re-enrich All
                                                 </PButton>
                                                 <PText size="x-small" style={{ marginTop: '1px' }}>Overwrite current enrichments</PText>
@@ -528,6 +536,24 @@ const EnrichingConfigView: React.FC = () => {
                 onClose={() => setShowTemplateLibrary(false)}
                 onSelectTemplate={handleSelectTemplate}
             />
+
+            <PModal
+                open={isForceModalOpen}
+                onDismiss={() => setIsForceModalOpen(false)}
+                heading="Confirm Force Re-enrichment"
+            >
+                <PText>
+                    This will re-enrich <strong>ALL</strong> tenders, even those already completed. This can consume many AI tokens and take significant time. Are you sure you want to continue?
+                </PText>
+                <PFlex style={{ gap: '16px', marginTop: '24px' }} justifyContent="end">
+                    <PButton variant="secondary" onClick={() => setIsForceModalOpen(false)}>
+                        Cancel
+                    </PButton>
+                    <PButton variant="primary" onClick={confirmForceBatch} loading={saving}>
+                        Start Full Enrichment
+                    </PButton>
+                </PFlex>
+            </PModal>
         </div>
     )
 }
