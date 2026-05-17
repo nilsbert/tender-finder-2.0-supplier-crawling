@@ -1,13 +1,13 @@
 import logging
 import xml.etree.ElementTree as ET
-from typing import Optional, Callable, Union
+from typing import Callable, Optional, Union
 
 import httpx
+from models.job_offer import JobOffer
+from models.tender_winning_notice import TenderWinningNotice
 from playwright.async_api import async_playwright
 
 from core.scrapers.base import BaseScraper
-from models.job_offer import JobOffer
-from models.tender_winning_notice import TenderWinningNotice
 
 logger = logging.getLogger("bund-scraper")
 
@@ -19,13 +19,17 @@ class BundScraper(BaseScraper):
         super().__init__(config, source_name)
         self.max_jobs = config.get("max_jobs", 500)
 
-    async def scrape(self, rss_url: str = "latest", progress_callback: Optional[Callable[[int, int], None]] = None) -> tuple[Union[list[JobOffer], list[TenderWinningNotice]], str]:
+    async def scrape(
+        self, rss_url: str = "latest", progress_callback: Optional[Callable[[int, int], None]] = None
+    ) -> tuple[Union[list[JobOffer], list[TenderWinningNotice]], str]:
         results = []
         stop_reason = "completed"
 
         if rss_url == "latest":
             if self.type == "AWARDS":
-                rss_url = "https://www.service.bund.de/Content/Globals/Functions/RSSFeed/RSSGenerator_Ausschreibungen.xml"
+                rss_url = (
+                    "https://www.service.bund.de/Content/Globals/Functions/RSSFeed/RSSGenerator_Ausschreibungen.xml"
+                )
             else:
                 rss_url = "https://www.service.bund.de/Content/Globals/Functions/RSSFeed/RSSGenerator_Stellen.xml"
 
@@ -45,7 +49,9 @@ class BundScraper(BaseScraper):
 
         async with async_playwright() as p:
             browser = await p.chromium.launch(headless=True)
-            context = await browser.new_context(user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36")
+            context = await browser.new_context(
+                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
+            )
             page = await context.new_page()
 
             for i, item in enumerate(items[:total_items]):
@@ -63,18 +69,20 @@ class BundScraper(BaseScraper):
                         employer = description_html.split("Arbeitgeber:")[1].split("<")[0].strip()
                     elif "Vergabestelle:" in description_html:
                         employer = description_html.split("Vergabestelle:")[1].split("<")[0].strip()
-                    
+
                     if "Ort:" in description_html:
                         location = description_html.split("Ort:")[1].split("<")[0].strip()
                     elif "Erfüllungsort:" in description_html:
                         location = description_html.split("Erfüllungsort:")[1].split("<")[0].strip()
 
-                logger.info(f"[{i+1}/{total_items}] Visiting {link}")
-                
+                logger.info(f"[{i + 1}/{total_items}] Visiting {link}")
+
                 full_description = ""
                 try:
                     await page.goto(link, wait_until="domcontentloaded", timeout=30000)
-                    content_element = await page.query_selector("div.content") or await page.query_selector("div#content")
+                    content_element = await page.query_selector("div.content") or await page.query_selector(
+                        "div#content"
+                    )
                     if content_element:
                         full_description = await content_element.inner_text()
                 except Exception as e:
@@ -89,7 +97,7 @@ class BundScraper(BaseScraper):
                         contracting_authority=employer or "Unknown",
                         description=full_description,
                         link=link,
-                        crawled_at=self.now_utc()
+                        crawled_at=self.now_utc(),
                     )
                 else:
                     item = JobOffer(
@@ -100,9 +108,9 @@ class BundScraper(BaseScraper):
                         location=location or "Unknown",
                         description=full_description,
                         link=link,
-                        crawled_at=self.now_utc()
+                        crawled_at=self.now_utc(),
                     )
-                
+
                 results.append(item)
 
                 if progress_callback:

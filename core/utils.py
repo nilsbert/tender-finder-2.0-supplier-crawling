@@ -16,6 +16,7 @@ def retry(max_retries: int = 3, delay: float = 1.0, backoff: float = 2.0, except
         backoff: Multiplier for delay after each retry.
         exceptions: Tuple of exceptions to catch and retry on.
     """
+
     def decorator(func: Callable):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
@@ -29,9 +30,13 @@ def retry(max_retries: int = 3, delay: float = 1.0, backoff: float = 2.0, except
                     if retries > max_retries:
                         logger.error(f"Function {func.__name__} failed after {max_retries} retries: {e}")
                         raise
-                    logger.warning(f"Function {func.__name__} failed: {e}. Retrying in {current_delay}s (Attempt {retries}/{max_retries})")
+                    logger.warning(
+                        f"Function {func.__name__} failed: {e}. Retrying in {current_delay}s (Attempt {retries}/{max_retries})"
+                    )
                     time.sleep(current_delay)
                     current_delay *= backoff
             return None
+
         return wrapper
+
     return decorator

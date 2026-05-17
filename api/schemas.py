@@ -1,7 +1,9 @@
 from datetime import datetime
 from typing import List, Optional
 from uuid import UUID
+
 from pydantic import BaseModel, ConfigDict
+
 
 class ClientSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -13,17 +15,20 @@ class ClientSchema(BaseModel):
     phone: Optional[str] = None
     created_at: datetime
 
+
 class TenderStatusHistorySchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     status: str
     transition_at: datetime
     reason: Optional[str] = None
 
+
 class CPVCodeSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     code: str
     is_main: bool
     label: Optional[str] = None
+
 
 class TenderLotSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -35,6 +40,7 @@ class TenderLotSchema(BaseModel):
     min_value: Optional[float] = None
     max_value: Optional[float] = None
 
+
 class TenderCriteriaSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: int
@@ -42,6 +48,7 @@ class TenderCriteriaSchema(BaseModel):
     type: Optional[str] = None
     weight: Optional[str] = None
     description: Optional[str] = None
+
 
 class TenderAwardSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -52,12 +59,14 @@ class TenderAwardSchema(BaseModel):
     award_date: Optional[datetime] = None
     contract_id: Optional[str] = None
 
+
 class TenderAttachmentSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     title: Optional[str] = None
     url: str
     mime_type: Optional[str] = None
     extracted_text: Optional[str] = None
+
 
 class TenderMetadataSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -72,39 +81,40 @@ class TenderMetadataSchema(BaseModel):
     version: int = 1
     portal_specific_data: Optional[dict] = None
 
+
 class TenderSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    
+
     id: UUID
     external_id: str
     source_system: str
     caller: Optional[str] = None
     customer: Optional[str] = None
-    
+
     # Classification
     notice_type: Optional[str] = None
     tender_type: Optional[str] = None
     procedure_type: Optional[str] = None
     legal_basis: Optional[str] = None
-    
+
     # Buyer Details
     buyer_type: Optional[str] = None
     buyer_activity: Optional[str] = None
-    
+
     # Contractual Details
     is_framework: bool = False
     contract_model: Optional[str] = None
     winners_summary: Optional[str] = None
-    
+
     contact_name: Optional[str] = None
     contact_email: Optional[str] = None
     contact_phone: Optional[str] = None
-    
+
     address_zip: Optional[str] = None
     address_city: Optional[str] = None
     address_country: Optional[str] = None
     nuts_codes: Optional[List[str]] = None
-    
+
     title: str
     description: Optional[str] = None
     document_text: Optional[str] = None
@@ -113,17 +123,17 @@ class TenderSchema(BaseModel):
     total_value: Optional[float] = None
     currency: Optional[str] = None
     client_id: Optional[UUID] = None
-    
+
     published_at: Optional[datetime] = None
     deadline_at: Optional[datetime] = None
     contract_start_at: Optional[datetime] = None
     contract_end_at: Optional[datetime] = None
     duration_value: Optional[int] = None
     duration_unit: Optional[str] = None
-    
+
     crawled_at: datetime
     updated_at: datetime
-    
+
     metadata_info: Optional[TenderMetadataSchema] = None
     client: Optional[ClientSchema] = None
     cpv_codes: List[CPVCodeSchema] = []
@@ -132,6 +142,7 @@ class TenderSchema(BaseModel):
     awards: List[TenderAwardSchema] = []
     attachments: List[TenderAttachmentSchema] = []
     status_history: List[TenderStatusHistorySchema] = []
+
 
 class JobOfferSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -149,6 +160,7 @@ class JobOfferSchema(BaseModel):
     deadline_at: Optional[datetime] = None
     crawled_at: datetime
     updated_at: datetime
+
 
 class TenderWinningNoticeSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)

@@ -3,18 +3,19 @@ Scheduler
 =========
 Loads active crawler configs from the DB and schedules cron jobs.
 """
+
 import logging
+from datetime import timezone
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from apscheduler.triggers.interval import IntervalTrigger
+from models import CrawlerConfigORM
 from sqlalchemy import select
 
 from .database import SessionLocal
-from models import CrawlerConfigORM
 from .executor import crawler_executor
 
-from datetime import timezone
 logger = logging.getLogger("scheduler")
 scheduler = AsyncIOScheduler(timezone=timezone.utc)
 
@@ -22,11 +23,12 @@ scheduler = AsyncIOScheduler(timezone=timezone.utc)
 async def run_crawler_task(crawler_id: str):
     """Invoke the crawler execution logic."""
     logger.info(f"🚀 [SCHEDULED] Starting execution for: {crawler_id}")
-    config = {"max_tenders": 500} # Lean default
+    config = {"max_tenders": 500}  # Lean default
     try:
         await crawler_executor.run_crawler_by_id(crawler_id, config)
     except Exception as e:
         logger.error(f"❌ [SCHEDULED] Failed to run {crawler_id}: {e}")
+
 
 async def restart_scheduler():
     """Clear all jobs and re-initialize."""
@@ -35,23 +37,25 @@ async def restart_scheduler():
         scheduler.remove_job(job.id)
     await init_scheduler()
 
+
 async def init_scheduler():
     """Load active configs from DB and register cron jobs."""
     async with SessionLocal() as db:
         from models.config import CrawlerScheduleConfigORM
-        
+
         # 1. Global Fleet Schedule
         result = await db.execute(select(CrawlerScheduleConfigORM).where(CrawlerScheduleConfigORM.id == 1))
         global_cfg = result.scalar_one_or_none()
-        
+
         if global_cfg and global_cfg.is_enabled:
             result = await db.execute(select(CrawlerConfigORM).where(CrawlerConfigORM.is_active == True))
             configs = result.scalars().all()
-            
+
             from datetime import datetime, time, timedelta
+
             now = datetime.now(timezone.utc)
             h, m = map(int, global_cfg.start_time.split(":"))
-            
+
             # Calculate the first run time (today or tomorrow)
             start_dt = datetime.combine(now.date(), time(h, m), tzinfo=timezone.utc)
             if start_dt < now:
@@ -68,7 +72,9 @@ async def init_scheduler():
                     id=f"global-{config.id}",
                     replace_existing=True,
                 )
-                logger.info(f"⏰ [GLOBAL] Scheduled {config.id} starting at {staggered_start} every {global_cfg.interval_hours}h")
+                logger.info(
+                    f"⏰ [GLOBAL] Scheduled {config.id} starting at {staggered_start} every {global_cfg.interval_hours}h"
+                )
                 delay_minutes += 1
 
         # 2. Individual Specific Schedules (Legacy/Custom)

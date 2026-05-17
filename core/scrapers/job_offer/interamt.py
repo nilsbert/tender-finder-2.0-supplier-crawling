@@ -5,9 +5,9 @@ import re
 from datetime import datetime
 from typing import Callable, Optional
 
+from models.job_offer import JobOffer
 from playwright.async_api import async_playwright
 
-from models.job_offer import JobOffer
 from core.scrapers.base import BaseScraper
 
 logger = logging.getLogger(__name__)
@@ -18,13 +18,17 @@ class InteramtScraper(BaseScraper):
         super().__init__(config, "INTERAMT")
         self.base_url = "https://interamt.de/koop/app/stellensuche?1"
 
-    async def scrape(self, supplier_name: str, progress_callback: Optional[Callable[[int, int], None]] = None) -> tuple[list[JobOffer], str]:
+    async def scrape(
+        self, supplier_name: str, progress_callback: Optional[Callable[[int, int], None]] = None
+    ) -> tuple[list[JobOffer], str]:
         offers = []
         stop_reason = "completed"
 
         async with async_playwright() as p:
             browser = await p.chromium.launch(headless=True)
-            context = await browser.new_context(user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36")
+            context = await browser.new_context(
+                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
+            )
             page = await context.new_page()
 
             try:
@@ -73,13 +77,15 @@ class InteramtScraper(BaseScraper):
                         logger.info("Clicking 'mehr laden'...")
                         try:
                             # Aggressively remove any blocking backdrops
-                            await page.evaluate("document.querySelectorAll('.ia-e-backdrop').forEach(el => el.remove())")
+                            await page.evaluate(
+                                "document.querySelectorAll('.ia-e-backdrop').forEach(el => el.remove())"
+                            )
                             await asyncio.sleep(0.5)
                             await load_more.click(force=True)
                         except Exception as e:
                             logger.warning(f"Forced click failed, trying evaluate: {e}")
                             await page.evaluate("document.querySelector('.ia-m-searchresults__btn-load')?.click()")
-                        
+
                         await asyncio.sleep(2)
                         await page.wait_for_load_state("networkidle")
                     else:
@@ -93,18 +99,18 @@ class InteramtScraper(BaseScraper):
                         stop_reason = "max_jobs"
                         break
 
-                    cols = await row.query_selector_all('td')
+                    cols = await row.query_selector_all("td")
                     if len(cols) < 8:
                         continue
 
                     try:
                         id_text = await cols[0].inner_text()
-                        job_id = id_text.split('\n')[0].strip()
+                        job_id = id_text.split("\n")[0].strip()
 
-                        title_el = await cols[0].query_selector('a')
-                        link = await title_el.get_attribute('href') if title_el else ""
-                        if link and not link.startswith('http'):
-                            link = "https://interamt.de/koop/app/" + link.lstrip('./')
+                        title_el = await cols[0].query_selector("a")
+                        link = await title_el.get_attribute("href") if title_el else ""
+                        if link and not link.startswith("http"):
+                            link = "https://interamt.de/koop/app/" + link.lstrip("./")
 
                         employer = await cols[1].inner_text()
                         title = await cols[2].inner_text()
@@ -132,7 +138,7 @@ class InteramtScraper(BaseScraper):
                             salary_group=salary.strip(),
                             link=link,
                             deadline_at=deadline,
-                            crawled_at=self.now_utc()
+                            crawled_at=self.now_utc(),
                         )
                         offers.append(offer)
 
@@ -145,7 +151,7 @@ class InteramtScraper(BaseScraper):
 
                 # 6. Extract detail descriptions with concurrency
                 logger.info(f"Extracting details for {len(offers)} offers using concurrency...")
-                
+
                 async def fetch_detail(offer, index):
                     if not offer.link:
                         return
@@ -154,11 +160,13 @@ class InteramtScraper(BaseScraper):
                         await page_local.goto(offer.link, wait_until="domcontentloaded", timeout=30000)
                         # Small wait for dynamic content
                         await asyncio.sleep(1)
-                        desc_el = await page_local.query_selector(".ia-m-stellensuche-detail__beschreibung, .ia-m-stelle__inhalt, .ia-m-stelle__beschreibung, .ia-m-stelle")
+                        desc_el = await page_local.query_selector(
+                            ".ia-m-stellensuche-detail__beschreibung, .ia-m-stelle__inhalt, .ia-m-stelle__beschreibung, .ia-m-stelle"
+                        )
                         if desc_el:
                             offer.description = await desc_el.inner_text()
                         if (index + 1) % 10 == 0:
-                            logger.info(f"Progress: {index+1}/{len(offers)} details extracted")
+                            logger.info(f"Progress: {index + 1}/{len(offers)} details extracted")
                     except Exception as e:
                         logger.warning(f"Failed to extract detail for {offer.link}: {e}")
                     finally:

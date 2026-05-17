@@ -1,8 +1,10 @@
 import logging
 from typing import List
+
 from fastapi import WebSocket
 
 logger = logging.getLogger("websocket-manager")
+
 
 class WebSocketManager:
     def __init__(self):
@@ -22,7 +24,7 @@ class WebSocketManager:
         """Broadcast a message to all connected clients."""
         if not self.active_connections:
             return
-            
+
         disconnected = []
         for connection in self.active_connections:
             try:
@@ -30,8 +32,9 @@ class WebSocketManager:
             except Exception as e:
                 logger.warning(f"Failed to send message to client: {e}")
                 disconnected.append(connection)
-        
+
         for conn in disconnected:
             self.disconnect(conn)
+
 
 ws_manager = WebSocketManager()

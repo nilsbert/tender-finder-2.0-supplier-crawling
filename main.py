@@ -7,7 +7,7 @@ FastAPI application with:
 - Static admin UI serving
 - Stale job cleanup on startup
 """
-import logging
+
 import os
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
@@ -16,14 +16,13 @@ import uvicorn
 from api.config import router as config_router
 from api.routes import router as api_router
 from core.database import SessionLocal, init_db
-from core.scheduler import init_scheduler
 from core.websocket_manager import ws_manager
 from dotenv import load_dotenv
 
-import os
 if os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING"):
     try:
         from azure.monitor.opentelemetry import configure_azure_monitor
+
         configure_azure_monitor()
     except ImportError:
         pass
@@ -38,9 +37,9 @@ from sqlalchemy import update
 # Load environment variables
 load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
 
-log_level = getattr(logging, os.getenv("LOG_LEVEL", "INFO").upper(), logging.INFO)
-logging.basicConfig(level=log_level, format="%(asctime)s %(name)s %(levelname)s: %(message)s")
-logger = logging.getLogger("main")
+from core.logger import setup_logger
+
+logger = setup_logger("main", "supplier-crawling")
 
 
 def _utcnow() -> datetime:

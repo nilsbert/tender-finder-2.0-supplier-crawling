@@ -3,29 +3,31 @@ import logging
 from datetime import datetime, timezone
 from typing import Optional
 
-from core.tender_notice_service import TenderNoticeService
-from core.job_offer_service import JobOfferService
-from core.scrapers.job_offer.interamt import InteramtScraper
-from core.scrapers.job_offer.eures import EuresScraper
-from core.scrapers.job_offer.bund_jobs import BundScraper as BundJobsScraper
-from core.scrapers.job_offer.deloitte import DeloitteScraper
-from core.scrapers.job_offer.accenture import AccentureScraper
-from core.scrapers.job_offer.porsche import PorscheScraper
-from core.scrapers.job_offer.wavestone import WavestoneScraper
-from core.scrapers.award_winning.bund_awards import BundScraper as BundAwardsScraper
-from core.scrapers.award_winning.oeffentliche_vergabe import OeffentlicheVergabeScraper
-from core.scrapers.award_winning.ted_awards import TEDAwardsScraper
-
-from .database import SessionLocal
 from models.job import CrawlerJobORM
 from models.job_offer import JobOffer
 from models.tender_winning_notice import TenderWinningNotice
+
+from core.job_offer_service import JobOfferService
+from core.scrapers.award_winning.bund_awards import BundScraper as BundAwardsScraper
+from core.scrapers.award_winning.oeffentliche_vergabe import OeffentlicheVergabeScraper
+from core.scrapers.award_winning.ted_awards import TEDAwardsScraper
+from core.scrapers.job_offer.accenture import AccentureScraper
+from core.scrapers.job_offer.bund_jobs import BundScraper as BundJobsScraper
+from core.scrapers.job_offer.deloitte import DeloitteScraper
+from core.scrapers.job_offer.eures import EuresScraper
+from core.scrapers.job_offer.interamt import InteramtScraper
+from core.scrapers.job_offer.porsche import PorscheScraper
+from core.scrapers.job_offer.wavestone import WavestoneScraper
+from core.tender_notice_service import TenderNoticeService
+
+from .database import SessionLocal
 
 logger = logging.getLogger("executor")
 
 
 def _utcnow() -> datetime:
     return datetime.now(timezone.utc).replace(tzinfo=None)
+
 
 class CrawlerExecutor:
     def __init__(self):
@@ -52,7 +54,7 @@ class CrawlerExecutor:
             crawler_id = f"{source}-{supplier_name}"
             job_id = await self.create_job_record(crawler_id)
             logger.info(f"🚀 Starting {source} crawl for {supplier_name} (Job {job_id})")
-            
+
             try:
                 source_up = source.upper()
                 if source_up == "INTERAMT":
@@ -91,7 +93,7 @@ class CrawlerExecutor:
                 results, stop_reason = await scraper.scrape(supplier_name)
                 job_service = JobOfferService()
                 tender_service = TenderNoticeService()
-                
+
                 async with SessionLocal() as db:
                     for item in results:
                         if isinstance(item, JobOffer):
@@ -106,7 +108,7 @@ class CrawlerExecutor:
                                 "link": item.link,
                                 "deadline_at": item.deadline_at,
                                 "category": getattr(item, "category", "PUBLIC_SECTOR"),
-                                "is_public": getattr(item, "is_public", True)
+                                "is_public": getattr(item, "is_public", True),
                             }
                             await job_service.upsert_job_offer(db, payload)
                         elif isinstance(item, dict) and item.get("external_id"):
@@ -126,10 +128,10 @@ class CrawlerExecutor:
                                 "currency": item.currency,
                                 "description": item.description,
                                 "link": item.link,
-                                "publication_date": item.publication_date
+                                "publication_date": item.publication_date,
                             }
                             await tender_service.upsert_winning_notice(db, payload)
-                    
+
                     job = await db.get(CrawlerJobORM, job_id)
                     if job:
                         job.status = "completed"
@@ -151,5 +153,6 @@ class CrawlerExecutor:
                         job.end_time = _utcnow()
                         await db.commit()
                 return {"status": "error", "message": str(e), "job_id": job_id}
+
 
 crawler_executor = CrawlerExecutor()

@@ -1,10 +1,11 @@
 import logging
-from typing import Optional, Callable
-from datetime import datetime, timezone
+from datetime import datetime
+from typing import Callable, Optional
+
 import httpx
+from models.tender_winning_notice import TenderWinningNotice
 
 from core.scrapers.base import BaseScraper
-from models.tender_winning_notice import TenderWinningNotice
 
 logger = logging.getLogger("ted-awards-scraper")
 
@@ -14,37 +15,39 @@ class TEDAwardsScraper(BaseScraper):
         super().__init__(config, "TED_AWARDS")
         self.api_url = "https://api.ted.europa.eu/v3/notices/search"
 
-    async def scrape(self, supplier_name: str = "DEU,AUT,CHE", progress_callback: Optional[Callable[[int, int], None]] = None) -> tuple[list[TenderWinningNotice], str]:
+    async def scrape(
+        self, supplier_name: str = "DEU,AUT,CHE", progress_callback: Optional[Callable[[int, int], None]] = None
+    ) -> tuple[list[TenderWinningNotice], str]:
         """
         Scrape award notices from TED API for Germany, Austria, and Switzerland.
         """
         countries = supplier_name.upper().replace(" ", "").split(",")
         mapping = {"DE": "DEU", "AT": "AUT", "CH": "CHE", "GER": "DEU", "AUTRI": "AUT", "SWISS": "CHE"}
         ted_countries = [mapping.get(c, c) for c in countries]
-        
+
         country_filter = ", ".join(ted_countries)
         query = f"place-of-performance-country-proc IN ({country_filter}) AND notice-type IN (can-standard, can-social, can-desg, can-tran)"
-        
+
         payload = {
             "query": query,
             "fields": [
-                "publication-number", 
-                "notice-type", 
-                "place-of-performance", 
-                "notice-title", 
-                "buyer-name", 
-                "winner-name", 
-                "total-value", 
+                "publication-number",
+                "notice-type",
+                "place-of-performance",
+                "notice-title",
+                "buyer-name",
+                "winner-name",
+                "total-value",
                 "total-value-cur",
                 "classification-cpv",
-                "publication-date"
+                "publication-date",
             ],
             "pageNumber": 0,
-            "limit": self.max_jobs
+            "limit": self.max_jobs,
         }
 
         logger.info(f"📡 Querying TED API: {query}")
-        
+
         try:
             async with httpx.AsyncClient(timeout=30.0) as client:
                 response = await client.post(self.api_url, json=payload)
@@ -61,7 +64,7 @@ class TEDAwardsScraper(BaseScraper):
 
         for i, item in enumerate(ted_notices):
             pub_num = item.get("publication-number")
-            
+
             def get_val(key, data_item=item):
                 val = data_item.get(key)
                 if isinstance(val, list) and len(val) > 0:
@@ -89,10 +92,10 @@ class TEDAwardsScraper(BaseScraper):
                 currency=currency,
                 link=f"https://ted.europa.eu/en/notice/-/detail/{pub_num}",
                 publication_date=self._parse_date(pub_date_str),
-                crawled_at=self.now_utc()
+                crawled_at=self.now_utc(),
             )
             notices.append(notice)
-            
+
             if progress_callback:
                 progress_callback(i + 1, total_found)
 

@@ -1,7 +1,8 @@
-import sqlite3
 import os
+import sqlite3
 
 db_path = "/Users/nilshyoma/Documents/GitHub - Mac Book/tender-finder-2.0/supplier-crawling/supplier_crawling.db"
+
 
 def patch_db():
     if not os.path.exists(db_path):
@@ -17,7 +18,7 @@ def patch_db():
     if "is_public" not in columns:
         print("Adding is_public to job_offer")
         cursor.execute("ALTER TABLE job_offer ADD COLUMN is_public BOOLEAN DEFAULT 1")
-    
+
     if "category" not in columns:
         print("Adding category to job_offer")
         cursor.execute("ALTER TABLE job_offer ADD COLUMN category VARCHAR(100) DEFAULT 'PUBLIC_SECTOR'")
@@ -32,6 +33,7 @@ def patch_db():
     conn.commit()
     conn.close()
     print("Database patched successfully.")
+
 
 if __name__ == "__main__":
     patch_db()

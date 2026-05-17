@@ -7,8 +7,10 @@ Selection is automatic based on the DATABASE_URL env var:
   - mssql+aioodbc://...  → MSSQL via ODBC
   - sqlite+aiosqlite://  → SQLite (fallback)
 """
+
 import os
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
+
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
 # Use path relative to project root to ensure sharing across microservices
@@ -25,30 +27,36 @@ if DATABASE_URL.startswith("mssql"):
     engine_kwargs["pool_timeout"] = 30
 
 engine = create_async_engine(DATABASE_URL, **engine_kwargs)
-SessionLocal = async_sessionmaker(autocommit=False, autoflush=False, bind=engine, class_=AsyncSession, expire_on_commit=False)
+SessionLocal = async_sessionmaker(
+    autocommit=False, autoflush=False, bind=engine, class_=AsyncSession, expire_on_commit=False
+)
+
 
 class Base(DeclarativeBase):
     pass
+
 
 async def get_db():
     async with SessionLocal() as session:
         yield session
 
+
 async def init_db():
     """Initialize database tables with explicit model imports."""
     import logging
+
     db_logger = logging.getLogger("crawling-db")
     db_logger.info(f"🔄 Initializing Crawling DB at: {DATABASE_URL}")
-    
-    import models
+
     db_logger.info(f"📋 Registered tables: {list(Base.metadata.tables.keys())}")
-    
+
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
     # Seed global schedule config if empty
     from models.config import CrawlerScheduleConfigORM
     from sqlalchemy import select
+
     async with SessionLocal() as session:
         result = await session.execute(select(CrawlerScheduleConfigORM))
         if not result.scalars().first():

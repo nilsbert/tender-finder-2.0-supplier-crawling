@@ -15,6 +15,7 @@ class JobOffer(Base):
     """
     Standardized domain model for job postings (Stellenausschreibungen).
     """
+
     __tablename__ = "job_offer"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)

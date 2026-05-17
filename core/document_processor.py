@@ -1,11 +1,12 @@
-import os
 import logging
-import requests
-from typing import Optional
-import PyPDF2
+import os
+
 import docx
+import PyPDF2
+import requests
 
 logger = logging.getLogger(__name__)
+
 
 class DocumentProcessor:
     @staticmethod
@@ -49,12 +50,12 @@ class DocumentProcessor:
         ext = os.path.splitext(file_path)[1].lower()
         if ext == ".pdf":
             return cls.extract_text_from_pdf(file_path)
-        elif ext in [".docx", ".doc"]:
+        if ext in [".docx", ".doc"]:
             # Note: .doc might require a different library, but python-docx is mainly for .docx
             return cls.extract_text_from_docx(file_path)
-        elif ext == ".txt":
+        if ext == ".txt":
             try:
-                with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+                with open(file_path, encoding="utf-8", errors="ignore") as f:
                     return f.read()
             except:
                 return ""

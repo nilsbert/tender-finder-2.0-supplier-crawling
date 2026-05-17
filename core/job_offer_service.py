@@ -1,10 +1,9 @@
 import logging
 from typing import Any, Optional
 
+from models.job_offer import JobOffer
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from models.job_offer import JobOffer
 
 logger = logging.getLogger("job_offer_service")
 
@@ -55,7 +54,7 @@ class JobOfferService:
         query: Optional[str] = None,
         source_system: Optional[str] = None,
         limit: int = 50,
-        offset: int = 0
+        offset: int = 0,
     ) -> list[JobOffer]:
         """
         List job offers with filtering.
@@ -66,10 +65,7 @@ class JobOfferService:
             stmt = stmt.where(JobOffer.employer.ilike(f"%{supplier}%"))
 
         if query:
-            stmt = stmt.where(
-                (JobOffer.title.ilike(f"%{query}%")) |
-                (JobOffer.description.ilike(f"%{query}%"))
-            )
+            stmt = stmt.where((JobOffer.title.ilike(f"%{query}%")) | (JobOffer.description.ilike(f"%{query}%")))
 
         if source_system:
             stmt = stmt.where(JobOffer.source_system == source_system)

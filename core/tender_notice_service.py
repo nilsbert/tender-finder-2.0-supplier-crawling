@@ -1,12 +1,13 @@
 import logging
-from typing import List, Optional
 from datetime import datetime, timezone
+from typing import List, Optional
 
+from models.tender_winning_notice import TenderWinningNotice
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from models.tender_winning_notice import TenderWinningNotice
 
 logger = logging.getLogger(__name__)
+
 
 class TenderNoticeService:
     async def upsert_winning_notice(self, db: AsyncSession, data: dict) -> TenderWinningNotice:
@@ -28,16 +29,13 @@ class TenderNoticeService:
             # Create new
             notice = TenderWinningNotice(**data)
             db.add(notice)
-        
+
         await db.commit()
         await db.refresh(notice)
         return notice
 
     async def list_winning_notices(
-        self, 
-        db: AsyncSession, 
-        contracting_authority: Optional[str] = None, 
-        source_system: Optional[str] = None
+        self, db: AsyncSession, contracting_authority: Optional[str] = None, source_system: Optional[str] = None
     ) -> List[TenderWinningNotice]:
         """
         List all winning notices with optional filtering.
@@ -47,7 +45,7 @@ class TenderNoticeService:
             stmt = stmt.where(TenderWinningNotice.contracting_authority.ilike(f"%{contracting_authority}%"))
         if source_system:
             stmt = stmt.where(TenderWinningNotice.source_system == source_system)
-        
+
         stmt = stmt.order_by(TenderWinningNotice.publication_date.desc())
         result = await db.execute(stmt)
         return list(result.scalars().all())

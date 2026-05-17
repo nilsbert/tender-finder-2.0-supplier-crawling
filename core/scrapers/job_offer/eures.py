@@ -2,9 +2,9 @@ import asyncio
 import logging
 from typing import Callable, Optional
 
+from models.job_offer import JobOffer
 from playwright.async_api import async_playwright
 
-from models.job_offer import JobOffer
 from core.scrapers.base import BaseScraper
 
 logger = logging.getLogger(__name__)
@@ -19,7 +19,9 @@ class EuresScraper(BaseScraper):
         # Base URL for search
         self.search_url_template = "https://europa.eu/eures/portal/jv-se/search?page=1&resultsPerPage=50&orderBy=BEST_MATCH&locationCodes={country}&keyword={keyword}&lang=en"
 
-    async def scrape(self, supplier_name: str, progress_callback: Optional[Callable[[int, int], None]] = None) -> tuple[list[JobOffer], str]:
+    async def scrape(
+        self, supplier_name: str, progress_callback: Optional[Callable[[int, int], None]] = None
+    ) -> tuple[list[JobOffer], str]:
         offers = []
         stop_reason = "completed"
 
@@ -33,7 +35,9 @@ class EuresScraper(BaseScraper):
 
         async with async_playwright() as p:
             browser = await p.chromium.launch(headless=True)
-            context = await browser.new_context(user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36")
+            context = await browser.new_context(
+                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
+            )
             page = await context.new_page()
 
             try:
@@ -46,7 +50,7 @@ class EuresScraper(BaseScraper):
 
                     # Wait for results to load
                     try:
-                        await page.wait_for_selector('.jv-result-item', timeout=10000)
+                        await page.wait_for_selector(".jv-result-item", timeout=10000)
                     except Exception:
                         if page_num == 1:
                             logger.info("No results found on EURES.")
@@ -54,7 +58,7 @@ class EuresScraper(BaseScraper):
                         break
 
                     # Extract results
-                    items = await page.query_selector_all('.jv-result-item')
+                    items = await page.query_selector_all(".jv-result-item")
                     page_offers = []
 
                     for item in items:
@@ -64,22 +68,22 @@ class EuresScraper(BaseScraper):
 
                         try:
                             # Employer
-                            employer_el = await item.query_selector('.jv-result-summary-employer')
+                            employer_el = await item.query_selector(".jv-result-summary-employer")
                             employer = await employer_el.inner_text() if employer_el else ""
 
                             # Title
-                            title_el = await item.query_selector('.jv-result-summary-title')
+                            title_el = await item.query_selector(".jv-result-summary-title")
                             title = await title_el.inner_text() if title_el else ""
-                            link = await title_el.get_attribute('href') if title_el else ""
-                            if link and not link.startswith('http'):
+                            link = await title_el.get_attribute("href") if title_el else ""
+                            if link and not link.startswith("http"):
                                 link = "https://europa.eu" + link
 
                             # Location
-                            location_el = await item.query_selector('.jv-result-summary-location')
+                            location_el = await item.query_selector(".jv-result-summary-location")
                             location = await location_el.inner_text() if location_el else ""
 
                             # ID
-                            external_id = f"EURES-{link.split('/')[-1]}" if link else f"EURES-{hash(title+employer)}"
+                            external_id = f"EURES-{link.split('/')[-1]}" if link else f"EURES-{hash(title + employer)}"
 
                             offer = JobOffer(
                                 external_id=external_id,
@@ -88,7 +92,7 @@ class EuresScraper(BaseScraper):
                                 employer=employer.strip(),
                                 location=location.strip(),
                                 link=link,
-                                crawled_at=self.now_utc()
+                                crawled_at=self.now_utc(),
                             )
                             page_offers.append(offer)
                         except Exception as e:
@@ -105,14 +109,16 @@ class EuresScraper(BaseScraper):
                                 await asyncio.sleep(2)  # Wait for Angular
 
                                 # EURES description can be in various ecl components
-                                desc_el = await detail_page.query_selector("app-job-details, .ecl-u-type-paragraph, .ecl-article")
+                                desc_el = await detail_page.query_selector(
+                                    "app-job-details, .ecl-u-type-paragraph, .ecl-article"
+                                )
                                 if desc_el:
                                     offer.description = await desc_el.inner_text()
 
                                 await detail_page.close()
                             except Exception as e:
                                 logger.warning(f"Failed to extract detail for EURES {offer.link}: {e}")
-                                if 'detail_page' in locals():
+                                if "detail_page" in locals():
                                     await detail_page.close()
 
                     offers.extend(page_offers)
